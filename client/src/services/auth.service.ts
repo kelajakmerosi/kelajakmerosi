@@ -1,61 +1,44 @@
 /**
  * auth.service.ts
- * Mock auth now; swap `mockLogin` / `mockRegister` for real API calls when backend is live.
+ * Real API implementation — talks to the Node.js/Express backend.
  */
 import type { User } from '../types'
-import { MOCK_CREDENTIALS } from '../constants'
+import api from './api'
 
 const STORAGE_KEY = 'auth_user'
 
-// ─── Token helpers (JWT-ready) ────────────────────────────
+// ─── Token helpers ────────────────────────────────────────────────────
 export const tokenStore = {
-  get:    ()     => localStorage.getItem('access_token'),
-  set:    (t: string) => localStorage.setItem('access_token', t),
-  clear:  ()     => localStorage.removeItem('access_token'),
+  get:   ()          => localStorage.getItem('access_token'),
+  set:   (t: string) => localStorage.setItem('access_token', t),
+  clear: ()          => localStorage.removeItem('access_token'),
 }
 
-// ─── Mock implementations ─────────────────────────────────
-async function mockLogin(identifier: string, password: string): Promise<User> {
-  // Simulate network latency
-  await new Promise(r => setTimeout(r, 400))
-
-  if (!MOCK_CREDENTIALS.identifiers.includes(identifier)) throw new Error('userNotFound')
-  if (password !== MOCK_CREDENTIALS.password)             throw new Error('wrongPassword')
-
-  return {
-    id:    'usr_1',
-    name:  'Foydalanuvchi',
-    email: 'user@edu.uz',
-    token: 'mock_jwt_access_token_xyz',
+// ─── API response type ────────────────────────────────────────────────
+interface AuthResponse {
+  token: string
+  user: {
+    id:    string
+    name:  string
+    email: string
+    role:  string
   }
 }
 
-async function mockRegister(name: string, email: string, _password: string): Promise<User> {
-  await new Promise(r => setTimeout(r, 400))
-  return {
-    id:    `usr_${Date.now()}`,
-    name,
-    email,
-    token: `mock_jwt_${Date.now()}`,
-  }
-}
-
-// ─── Public service ───────────────────────────────────────
+// ─── Public service ────────────────────────────────────────────────────
 export const authService = {
-  login: async (identifier: string, password: string): Promise<User> => {
-    // TODO: replace with real API:
-    // return api.post<{ user: User; token: string }>('/auth/login', { identifier, password })
-    //   .then(res => { tokenStore.set(res.token); return res.user })
-    const user = await mockLogin(identifier, password)
-    tokenStore.set(user.token)
+  login: async (email: string, password: string): Promise<User> => {
+    const res = await api.post<AuthResponse>('/auth/login', { email, password })
+    const user: User = { id: res.user.id, name: res.user.name, email: res.user.email, token: res.token }
+    tokenStore.set(res.token)
     localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
     return user
   },
 
   register: async (name: string, email: string, password: string): Promise<User> => {
-    // TODO: replace with real API call
-    const user = await mockRegister(name, email, password)
-    tokenStore.set(user.token)
+    const res = await api.post<AuthResponse>('/auth/register', { name, email, password })
+    const user: User = { id: res.user.id, name: res.user.name, email: res.user.email, token: res.token }
+    tokenStore.set(res.token)
     localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
     return user
   },

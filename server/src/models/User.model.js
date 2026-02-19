@@ -1,37 +1,70 @@
-const mongoose = require('mongoose');
-const bcrypt   = require('bcryptjs');
+const bcrypt     = require('bcryptjs');
+const { pool }   = require('../config/db');
 
-const userSchema = new mongoose.Schema(
-  {
-    name:     { type: String,  required: true, trim: true },
-    email:    { type: String,  required: true, unique: true, lowercase: true, trim: true },
-    password: { type: String,  select: false },
-    avatar:   { type: String,  default: '' },
-    role:     { type: String,  enum: ['student', 'admin'], default: 'student' },
-    provider: { type: String,  enum: ['local', 'google'],  default: 'local' },
-    googleId: { type: String },
-    progress: [
-      {
-        subjectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Subject' },
-        completed: { type: Number, default: 0 },
-        score:     { type: Number, default: 0 },
-      },
-    ],
-  },
-  { timestamps: true }
-);
-
-// ─── Hash password before save ────────────────────────────────────────────────
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password') || !this.password) return next();
-  this.password = await bcrypt.hash(this.password, 12);
-  next();
+/**
+ * Strip sensitive fields before sending to client.
+ * @param {object} row - raw database row
+ */
+const toPublic = (row) => ({
+  id:        row.id,
+  name:      row.name,
+  email:     row.email,
+  avatar:    row.avatar,
+  role:      row.role,
+  createdAt: row.created_at,
 });
 
-// ─── Strip sensitive fields for API responses ─────────────────────────────────
-userSchema.methods.toPublic = function () {
-  const { _id, name, email, avatar, role, progress, createdAt } = this;
-  return { id: _id, name, email, avatar, role, progress, createdAt };
+/**
+ * Find a user by email.
+ * Pass `{ withPassword: true }` to include the hashed password.
+ */
+const findByEmail = async (email, { withPassword = false } = {}) => {
+  const cols = withPassword
+    ? 'id, name, email, password, avatar, role, provider, created_at'
+    : 'id, name, email, avatar, role, provider, created_at';
+  const { rows } = await pool.query(
+    `SELECT ${cols} FROM users WHERE email = $1 LIMIT 1`,
+    [email.toLowerCase()]
+  );
+  return rows[0] ?? null;
 };
 
-module.exports = mongoose.model('User', userSchema);
+/**
+ * Find a user by primary key.
+ */
+const findById = async (id) => {
+  const { rows } = await pool.query(
+    'SELECT id, name, email, avatar, role, provider, created_at FROM users WHERE id = $1 LIMIT 1',
+    [id]
+  );
+  return rows[0] ?? null;
+};
+
+/**
+ * Create a new local user (hashes password automatically).
+ */
+const create = async ({ name, email, password, provider = 'local', googleId = null }) => {
+  const hashed = password ? await bcrypt.hash(password, 12) : null;
+  const { rows } = await pool.query(
+    `INSERT INTO users (name, email, password, provider, google_id)
+     VALUES ($1, $2, $3, $4, $5)
+     RETURNING id, name, email, avatar, role, provider, created_at`,
+    [name, email.toLowerCase(), hashed, provider, googleId]
+  );
+  return rows[0];
+};
+
+/**
+ * Update profile fields for a user.
+ */
+const update = async (id, { name, avatar }) => {
+  const { rows } = await pool.query(
+    `UPDATE users SET name = COALESCE($1, name), avatar = COALESCE($2, avatar),
+     updated_at = NOW() WHERE id = $3
+     RETURNING id, name, email, avatar, role, created_at`,
+    [name, avatar, id]
+  );
+  return rows[0] ?? null;
+};
+
+module.exports = { findByEmail, findById, create, update, toPublic };

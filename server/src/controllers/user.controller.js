@@ -3,7 +3,7 @@ const User = require('../models/User.model');
 // ─── GET /api/users/profile ───────────────────────────────────────────────────
 
 exports.getProfile = async (req, res) => {
-  res.json(req.user.toPublic());
+  res.json(User.toPublic(req.user));
 };
 
 // ─── PUT /api/users/profile ───────────────────────────────────────────────────
@@ -11,12 +11,8 @@ exports.getProfile = async (req, res) => {
 exports.updateProfile = async (req, res, next) => {
   try {
     const { name, avatar } = req.body;
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      { name, avatar },
-      { new: true, runValidators: true }
-    );
-    res.json(user.toPublic());
+    const user = await User.update(req.user.id, { name, avatar });
+    res.json(User.toPublic(user));
   } catch (err) { next(err); }
 };
 
@@ -24,5 +20,5 @@ exports.updateProfile = async (req, res, next) => {
 
 exports.getProgress = async (req, res) => {
   // TODO: aggregate quiz/lesson progress for the authenticated user
-  res.json({ progress: req.user.progress || [] });
+  res.json({ progress: [] });
 };

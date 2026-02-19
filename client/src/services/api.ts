@@ -3,7 +3,7 @@
  * Ready for Axios swap-in: replace `fetch` calls with axios instance.
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? 'https://api.eduuz.uz/v1'
+const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5000/api'
 
 interface RequestOptions {
   method?:  'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
@@ -31,8 +31,8 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
   })
 
   if (!res.ok) {
-    const msg = await res.text().catch(() => 'Unknown error')
-    throw new ApiError(res.status, msg)
+    const data = await res.json().catch(() => ({ message: 'Unknown error' }))
+    throw new ApiError(res.status, data.message ?? 'Unknown error')
   }
 
   return res.json() as Promise<T>
