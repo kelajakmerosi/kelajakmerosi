@@ -61,5 +61,11 @@
   "subjectOverview": "Subject Overview",
   "markAs": "Change status",
   "loginWithGoogle": "Continue with Google",
-  "orContinueWith": "or"
+  "orContinueWith": "or",
+  "googleLoginFailed": "Google sign-in failed",
+  "googleLoginUnavailable": "Google sign-in is unavailable right now. Please try again.",
+  "networkError": "Unable to reach the server. Please check your network and try again.",
+  "popupBlocked": "Browser blocked the Google popup. Please allow popups and try again.",
+  "authLoading": "Signing in...",
+  "googleLoading": "Signing in with Google..."
 }

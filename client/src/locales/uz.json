@@ -61,5 +61,11 @@
   "subjectOverview": "Fan ko'rinishi",
   "markAs": "Holatni o'zgartirish",
   "loginWithGoogle": "Google bilan kirish",
-  "orContinueWith": "yoki"
+  "orContinueWith": "yoki",
+  "googleLoginFailed": "Google orqali kirishda xatolik yuz berdi",
+  "googleLoginUnavailable": "Google orqali kirish hozircha mavjud emas. Iltimos, qaytadan urinib ko'ring.",
+  "networkError": "Tarmoqqa ulanib bo'lmadi. Internet yoki serverni tekshiring.",
+  "popupBlocked": "Brauzer Google oynasini blokladi. Iltimos, pop-upga ruxsat bering va qayta urinib ko'ring.",
+  "authLoading": "Kirilmoqda...",
+  "googleLoading": "Google orqali kirilmoqda..."
 }

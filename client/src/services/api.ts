@@ -3,7 +3,7 @@
  * Ready for Axios swap-in: replace `fetch` calls with axios instance.
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5000/api'
+const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api'
 
 interface RequestOptions {
   method?:  'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'

@@ -52,7 +52,7 @@ npm run dev
 Or run independently:
 ```bash
 npm run dev:client    # Vite on http://localhost:5173
-npm run dev:server    # Express on http://localhost:5000
+npm run dev:server    # Express on http://localhost:8080
 ```
 
 ### Build for production

@@ -61,5 +61,11 @@
   "subjectOverview": "Обзор предмета",
   "markAs": "Изменить статус",
   "loginWithGoogle": "Войти через Google",
-  "orContinueWith": "или"
+  "orContinueWith": "или",
+  "googleLoginFailed": "Не удалось выполнить вход через Google",
+  "googleLoginUnavailable": "Вход через Google сейчас недоступен. Попробуйте снова.",
+  "networkError": "Не удалось подключиться к серверу. Проверьте сеть и попробуйте снова.",
+  "popupBlocked": "Браузер заблокировал всплывающее окно Google. Разрешите всплывающие окна и повторите попытку.",
+  "authLoading": "Выполняется вход...",
+  "googleLoading": "Вход через Google..."
 }

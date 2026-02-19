@@ -1,11 +1,23 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { useAuth }  from '../hooks/useAuth'
 import { useLang }  from '../hooks'
 import { Input }    from '../components/ui/Input'
 import { Button }   from '../components/ui/Button'
 import { GlassCard }from '../components/ui/GlassCard'
-import { Alert, Tabs, Divider } from '../components/ui/index'
+import { Alert, Tabs } from '../components/ui/index'
 import styles from './AuthPage.module.css'
+
+function GoogleSVG() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+      <path fill="none" d="M0 0h48v48H0z"/>
+    </svg>
+  )
+}
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string
 
@@ -18,49 +30,73 @@ export function AuthPage() {
   const [loading, setLoading] = useState(false)
   const [gLoading,setGLoading]= useState(false)
   const [form,    setForm]    = useState({ email:'', password:'', name:'', confirm:'' })
-  const googleBtnRef = useRef<HTMLDivElement>(null)
 
-  // ─── Initialize Google Identity Services ───────────────────────────────────
-  useEffect(() => {
-    const initGoogle = () => {
-      if (!GOOGLE_CLIENT_ID || !window.google?.accounts?.id) return
+  const handleGoogleLogin = () => {
+    if (!GOOGLE_CLIENT_ID) {
+      setError(t('googleLoginUnavailable'))
+      return
+    }
 
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: async ({ credential }: { credential: string }) => {
-          setGLoading(true)
-          setError('')
-          try {
-            await loginWithGoogle(credential)
-          } catch (e: unknown) {
-            setError(e instanceof Error ? e.message : 'Google login failed')
+    // Fallback: open standard OAuth2 popup (works once localhost:5173 is registered
+    // as an Authorized redirect URI in Google Cloud Console)
+    const nonce = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)
+    const params = new URLSearchParams({
+      client_id:     GOOGLE_CLIENT_ID,
+      redirect_uri:  window.location.origin,
+      response_type: 'id_token',
+      scope:         'openid email profile',
+      nonce,
+    })
+
+    const popup = window.open(
+      `https://accounts.google.com/o/oauth2/v2/auth?${params}`,
+      'google-oauth',
+      'width=500,height=620,top=100,left=100,resizable=yes,scrollbars=yes'
+    )
+
+    if (!popup) {
+      setError(t('popupBlocked'))
+      return
+    }
+
+    setGLoading(true)
+
+    const timer = setInterval(() => {
+      try {
+        if (!popup || popup.closed) {
+          clearInterval(timer)
+          setGLoading(false)
+          return
+        }
+        const hash = popup.location.hash
+        if (hash?.includes('id_token=')) {
+          const token = new URLSearchParams(hash.slice(1)).get('id_token')
+          popup.close()
+          clearInterval(timer)
+          if (token) {
+            loginWithGoogle(token)
+              .catch(e => {
+                const msg = e instanceof Error ? e.message : ''
+                setError(t(msg) !== msg ? t(msg) : t('googleLoginFailed'))
+              })
+              .finally(() => setGLoading(false))
+          } else {
+            setError(t('googleLoginFailed'))
             setGLoading(false)
           }
-        },
-      })
-
-      if (googleBtnRef.current) {
-        window.google.accounts.id.renderButton(googleBtnRef.current, {
-          theme: 'outline',
-          size:  'large',
-          width: 340,
-          text:  'continue_with',
-          shape: 'rectangular',
-          logo_alignment: 'left',
-        })
+        }
+      } catch {
+        // Still on Google's domain — cross-origin, keep polling
       }
-    }
+    }, 300)
 
-    // GSI script may load async — wait for it if not yet ready
-    if (window.google) {
-      initGoogle()
-    } else {
-      const script = document.querySelector('script[src*="accounts.google.com/gsi/client"]')
-      script?.addEventListener('load', initGoogle)
-      return () => script?.removeEventListener('load', initGoogle)
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    // Auto-close after 3 min
+    setTimeout(() => {
+      clearInterval(timer)
+      try { if (!popup.closed) popup.close() } catch {}
+      setGLoading(false)
+    }, 180_000)
+  }
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm(f => ({ ...f, [k]: e.target.value }))
@@ -77,7 +113,11 @@ export function AuthPage() {
       else await register(form.name || form.email.split('@')[0], form.email, form.password)
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'error'
-      setError(t(msg) !== msg ? t(msg) : msg)
+      if (msg.toLowerCase().includes('networkerror')) {
+        setError(t('networkError'))
+      } else {
+        setError(t(msg) !== msg ? t(msg) : msg)
+      }
     }
     setLoading(false)
   }
@@ -124,7 +164,14 @@ export function AuthPage() {
           {error && <Alert variant="error">{error}</Alert>}
 
           <Button fullWidth size="lg" onClick={handleSubmit} disabled={loading}>
-            {loading ? '...' : mode === 'login' ? t('login') : t('createAccount')}
+            {loading
+              ? (
+                <span className={styles.loadingInline}>
+                  <span className={styles.spinner} aria-hidden="true" />
+                  {t('authLoading')}
+                </span>
+              )
+              : mode === 'login' ? t('login') : t('createAccount')}
           </Button>
 
           <div className={styles.orRow}>
@@ -133,15 +180,30 @@ export function AuthPage() {
             <span className={styles.orLine} />
           </div>
 
-          {/* Google Sign-In button rendered by GSI SDK */}
+          {/* Custom translated Google button */}
           <div className={styles.googleWrap}>
-            {gLoading
-              ? <div className={styles.googleLoading}>...</div>
-              : <div ref={googleBtnRef} className={styles.googleBtn} />
-            }
+            <Button
+              variant="ghost"
+              fullWidth
+              className={styles.googleFallbackBtn}
+              onClick={handleGoogleLogin}
+              disabled={gLoading}
+            >
+              {gLoading
+                ? (
+                  <span className={styles.loadingInline}>
+                    <span className={styles.spinner} aria-hidden="true" />
+                    {t('googleLoading')}
+                  </span>
+                )
+                : (
+                  <>
+                    <GoogleSVG />
+                    {t('loginWithGoogle')}
+                  </>
+                )}
+            </Button>
           </div>
-
-          <Divider />
 
           <Button variant="ghost" fullWidth onClick={continueAsGuest}>
             {t('guestMode')}
