@@ -1,0 +1,17 @@
+.header { margin-bottom: 32px; }
+.title  { 
+  font-size: 32px; 
+  font-weight: 700; 
+  margin-bottom: 8px; 
+  letter-spacing: -0.02em;
+}
+.subtitle { 
+  color: var(--text-2); 
+  font-size: 16px; 
+  line-height: 1.5;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}

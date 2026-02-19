@@ -1,24 +1,17 @@
 {
-  "name": "eduuz",
-  "private": true,
+  "name": "kelajakmerosi",
   "version": "1.0.0",
-  "type": "module",
+  "description": "Kelajak Merosi — full-stack edu platform (React + Node.js/Express + MongoDB)",
+  "private": true,
   "scripts": {
-    "dev":     "vite",
-    "build":   "tsc && vite build",
-    "preview": "vite preview",
-    "lint":    "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "react":     "^18.2.0",
-    "react-dom": "^18.2.0"
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "dev": "concurrently -n CLIENT,SERVER -c cyan,green \"npm run dev:client\" \"npm run dev:server\"",
+    "build:client": "cd client && npm run build",
+    "typecheck": "cd client && npm run typecheck",
+    "install:all": "cd client && npm install && cd ../server && npm install"
   },
   "devDependencies": {
-    "@types/react":         "^18.2.0",
-    "@types/react-dom":     "^18.2.0",
-    "@vitejs/plugin-react": "^4.0.0",
-    "typescript":           "^5.0.0",
-    "vite":                 "^4.4.0"
+    "concurrently": "^8.2.2"
   }
 }
