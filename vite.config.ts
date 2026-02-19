@@ -19,4 +19,5 @@ export default defineConfig({
       '@types':     resolve(__dirname, 'src/types'),
     },
   },
+  base: './', 
 })
