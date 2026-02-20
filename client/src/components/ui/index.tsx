@@ -34,10 +34,10 @@ const STATUS_ICONS: Record<TopicStatus, ReactNode> = {
   locked:     <Lock size={14} strokeWidth={2.5} />,
 }
 
-interface StatusBadgeProps { status: TopicStatus; label: string }
-export function StatusBadge({ status, label }: StatusBadgeProps) {
+interface StatusBadgeProps { status: TopicStatus; label: string; className?: string }
+export function StatusBadge({ status, label, className }: StatusBadgeProps) {
   return (
-    <span className={cn(styles.badge, BADGE_CLASSES[status])}>
+    <span className={cn(styles.badge, BADGE_CLASSES[status], className)}>
       <span>{STATUS_ICONS[status]}</span>
       {label}
     </span>

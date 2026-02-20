@@ -1,70 +1,83 @@
 /* ─── Design Tokens ──────────────────────────────────────── */
 :root {
-  --font-main:  'Outfit', sans-serif;
-  --font-mono:  'Space Mono', monospace;
+  --font-main: 'Plus Jakarta Sans', sans-serif;
+  --font-display: 'Sora', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 
-  --radius-xs:  6px;
-  --radius-sm:  8px;
-  --radius-md:  14px;
-  --radius-lg:  20px;
-  --radius-xl:  28px;
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
   --radius-full: 9999px;
 
-  --shadow-sm:  0 2px 8px  rgba(0,0,0,.06);
-  --shadow-md:  0 4px 24px rgba(0,0,0,.10);
-  --shadow-lg:  0 8px 48px rgba(0,0,0,.15);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05), 0 8px 18px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 2px 8px rgba(15, 23, 42, 0.08), 0 16px 34px rgba(15, 23, 42, 0.1);
+  --shadow-lg: 0 4px 12px rgba(15, 23, 42, 0.1), 0 24px 60px rgba(15, 23, 42, 0.16);
 
-  --transition: .2s cubic-bezier(.4,0,.2,1);
-  --sidebar-w:  260px;
-  --topbar-h:   64px;
+  --transition: .24s cubic-bezier(.4, 0, .2, 1);
+  --sidebar-w: 272px;
+  --topbar-h: 72px;
 
-  /* Accent palette */
-  --accent:        #6366f1;
-  --accent-2:      #8b5cf6;
-  --accent-light:  rgba(99,102,241,.15);
-  --success:       #10b981;
-  --success-light: rgba(16,185,129,.15);
-  --warning:       #f59e0b;
-  --warning-light: rgba(245,158,11,.15);
-  --danger:        #ef4444;
-  --danger-light:  rgba(239,68,68,.15);
-  --info:          #06b6d4;
-  --info-light:    rgba(6,182,212,.15);
-  --neutral:       #8892b0;
-  --neutral-light: rgba(139,146,176,.15);
+  --accent: #0f6fd6;
+  --accent-2: #19a0f5;
+  --accent-light: rgba(15, 111, 214, 0.14);
+
+  --success: #0f9a6c;
+  --success-light: rgba(15, 154, 108, 0.14);
+
+  --warning: #d97706;
+  --warning-light: rgba(217, 119, 6, 0.15);
+
+  --danger: #cf3f4c;
+  --danger-light: rgba(207, 63, 76, 0.14);
+
+  --info: #0284c7;
+  --info-light: rgba(2, 132, 199, 0.14);
+
+  --neutral: #7584a0;
+  --neutral-light: rgba(117, 132, 160, 0.16);
 }
 
-/* ─── Light theme ────────────────────────────────────────── */
+/* ─── Light Theme ─────────────────────────────────────────── */
 [data-theme='light'] {
-  --bg:              #f0f2f8;
-  --bg-2:            #ffffff;
-  --bg-3:            #e8eaf4;
-  --surface:         rgba(255,255,255,.85);
-  --surface-border:  rgba(255,255,255,.60);
-  --glass:           rgba(255,255,255,.70);
-  --glass-border:    rgba(255,255,255,.90);
-  --text:            #0f1117;
-  --text-2:          #4b5168;
-  --text-3:          #8b92a9;
+  --bg: #f3f6fb;
+  --bg-2: #ffffff;
+  --bg-3: #e9eef6;
+
+  --surface: rgba(255, 255, 255, 0.86);
+  --surface-border: rgba(133, 147, 174, 0.28);
+
+  --glass: rgba(255, 255, 255, 0.84);
+  --glass-border: rgba(132, 146, 173, 0.26);
+
+  --text: #10182b;
+  --text-2: #44516a;
+  --text-3: #73839d;
 }
 
-/* ─── Dark theme ─────────────────────────────────────────── */
+/* ─── Dark Theme ──────────────────────────────────────────── */
 [data-theme='dark'] {
-  --bg:              #0a0c14;
-  --bg-2:            #111422;
-  --bg-3:            #181c2e;
-  --surface:         rgba(20,24,40,.90);
-  --surface-border:  rgba(255,255,255,.08);
-  --glass:           rgba(18,22,38,.80);
-  --glass-border:    rgba(255,255,255,.10);
-  --text:            #e8eaf6;
-  --text-2:          #8892b0;
-  --text-3:          #4a5070;
-  --accent:          #818cf8;
-  --accent-2:        #a78bfa;
-  --accent-light:    rgba(129,140,248,.15);
-  --success:         #34d399;
-  --warning:         #fbbf24;
-  --danger:          #f87171;
-  --info:            #22d3ee;
+  --bg: #0d1423;
+  --bg-2: #121b2f;
+  --bg-3: #1a243b;
+
+  --surface: rgba(21, 30, 52, 0.88);
+  --surface-border: rgba(154, 167, 192, 0.2);
+
+  --glass: rgba(19, 29, 51, 0.86);
+  --glass-border: rgba(148, 163, 184, 0.2);
+
+  --text: #edf2ff;
+  --text-2: #b7c2d9;
+  --text-3: #8492af;
+
+  --accent: #4ea9ff;
+  --accent-2: #22d3ee;
+  --accent-light: rgba(78, 169, 255, 0.2);
+
+  --success: #34d399;
+  --warning: #f59e0b;
+  --danger: #fb7185;
+  --info: #38bdf8;
 }

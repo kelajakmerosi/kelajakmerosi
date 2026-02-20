@@ -70,3 +70,4 @@ npm run build:client
 | GET | `/api/subjects` | List all subjects |
 | GET | `/api/users/profile` | Get user profile |
 | GET | `/api/users/progress` | Get user progress |
+| PATCH | `/api/users/progress/:subjectId/:topicId` | Upsert lesson progress payload |

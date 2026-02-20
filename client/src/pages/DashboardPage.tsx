@@ -1,42 +1,122 @@
 import { useMemo } from 'react'
-import { useAuth }          from '../hooks/useAuth'
-import { useLang, useApp }  from '../hooks'
-import { useSubjectStats }  from '../hooks/useSubjectStats'
-import { GlassCard }        from '../components/ui/GlassCard'
-import { ProgressBar, Alert, StatCard } from '../components/ui/index'
-import { SUBJECTS, SUBJECT_NAMES, TOPIC_NAMES } from '../constants'
-import { relativeTime }     from '../utils'
-import type { PageId }      from '../types'
-import { 
-  FileText, CheckCircle2, XCircle, Trophy, 
-  BarChart3, Clock 
-} from 'lucide-react'
-import styles               from './DashboardPage.module.css'
+import { useAuth } from '../hooks/useAuth'
+import { useLang, useApp } from '../hooks'
+import { GlassCard } from '../components/ui/GlassCard'
+import { Button } from '../components/ui/Button'
+import { Alert } from '../components/ui/index'
+import { SUBJECT_NAMES, TOPIC_NAMES } from '../constants'
+import { Clock3, Compass, Flame, PlayCircle, Target, Trophy } from 'lucide-react'
+import type { CurrentTopic, PageId, ResumeTarget } from '../types'
+import styles from './DashboardPage.module.css'
 
 interface DashboardPageProps {
-  onNavigate: (page: PageId, opts?: { subjectId?: string }) => void
+  onNavigate: (page: PageId, opts?: { subjectId?: string; topic?: CurrentTopic }) => void
 }
 
-export function DashboardPage(_props: DashboardPageProps) {
-  const { user, isGuest } = useAuth()
-  const { t, lang }       = useLang()
-  const { lessonHistory } = useApp()
-  const subjectStats      = useSubjectStats()
+const SUPPORT_EMAIL = 'support@kelajakmerosi.app'
 
-  const totals = useMemo(() => subjectStats.reduce(
-    (acc, s) => ({
-      tests:     acc.tests     + s.tests,
-      correct:   acc.correct   + s.correct,
-      incorrect: acc.incorrect + s.incorrect,
-      completed: acc.completed + s.completed,
-      total:     acc.total     + s.total,
-    }),
-    { tests:0, correct:0, incorrect:0, completed:0, total:0 },
-  ), [subjectStats])
+const formatTimeOnTask = (sec: number) => {
+  if (sec < 60) return `${sec}s`
+  const mins = Math.round(sec / 60)
+  if (mins < 60) return `${mins}m`
+  const hrs = Math.floor(mins / 60)
+  const remMins = mins % 60
+  return remMins > 0 ? `${hrs}h ${remMins}m` : `${hrs}h`
+}
+
+export function DashboardPage({ onNavigate }: DashboardPageProps) {
+  const { user, isGuest } = useAuth()
+  const { t, lang } = useLang()
+  const {
+    learningSummary,
+    isHydrating,
+    loadError,
+    retryLoad,
+    lessonHistory,
+  } = useApp()
+
+  const topicLabel = (subjectId: string, topicId: string) => {
+    const subjectName = SUBJECT_NAMES[lang]?.[subjectId] ?? subjectId
+    const topicName = TOPIC_NAMES[lang]?.[topicId] ?? topicId
+    return `${subjectName} · ${topicName}`
+  }
+
+  const openTarget = (target: { subjectId: string; topicId: string } | null) => {
+    if (!target) {
+      onNavigate('subjects')
+      return
+    }
+
+    onNavigate('topic', {
+      topic: { subjectId: target.subjectId, topicId: target.topicId },
+    })
+  }
+
+  const toReasonText = (reason: ResumeTarget['reason']) => {
+    if (reason === 'resume') return t('resumeReason')
+    if (reason === 'weak') return t('weakReason')
+    return t('nextReason')
+  }
+
+  const dueTop = learningSummary.dueToday[0] ?? null
+  const weakTop = learningSummary.weakTopics[0] ?? null
+  const continueTarget = learningSummary.resumeTarget ?? learningSummary.recommendedNext
+
+  const cards = useMemo(() => ([
+    {
+      id: 'continue',
+      icon: <PlayCircle size={20} />,
+      title: t('continueLearning'),
+      body: continueTarget
+        ? `${topicLabel(continueTarget.subjectId, continueTarget.topicId)} · ${toReasonText(continueTarget.reason)}`
+        : t('noLessonToResume'),
+      action: continueTarget ? t('resume') : t('startLearningNow'),
+      onClick: () => openTarget(continueTarget),
+      disabled: false,
+    },
+    {
+      id: 'due',
+      icon: <Clock3 size={20} />,
+      title: t('dueToday'),
+      body: dueTop
+        ? `${topicLabel(dueTop.subjectId, dueTop.topicId)} · ${t(`dueReason_${dueTop.reason}`)}`
+        : t('nothingDueToday'),
+      action: dueTop ? t('startDueLesson') : t('browseLessons'),
+      onClick: () => openTarget(dueTop),
+      disabled: false,
+    },
+    {
+      id: 'weak',
+      icon: <Target size={20} />,
+      title: t('weakTopics'),
+      body: weakTop
+        ? `${topicLabel(weakTop.subjectId, weakTop.topicId)} · ${weakTop.score}%`
+        : t('noWeakTopics'),
+      action: weakTop ? t('reviewMistakes') : t('takeQuiz'),
+      onClick: () => openTarget(weakTop),
+      disabled: false,
+    },
+    {
+      id: 'recommended',
+      icon: <Compass size={20} />,
+      title: t('recommendedNext'),
+      body: learningSummary.recommendedNext
+        ? `${topicLabel(learningSummary.recommendedNext.subjectId, learningSummary.recommendedNext.topicId)} · ${toReasonText(learningSummary.recommendedNext.reason)}`
+        : t('noRecommendationYet'),
+      action: learningSummary.recommendedNext ? t('startLesson') : t('browseLessons'),
+      onClick: () => openTarget(learningSummary.recommendedNext),
+      disabled: false,
+    },
+  ]), [
+    continueTarget,
+    dueTop,
+    learningSummary.recommendedNext,
+    t,
+    weakTop,
+  ])
 
   return (
-    <div className={`page-content fade-in`}>
-      {/* Header */}
+    <div className="page-content fade-in">
       <div className={styles.header}>
         <h2 className={styles.title}>
           {user ? `${t('welcome')}, ${user.name}!` : `${t('welcome')}!`}
@@ -50,70 +130,77 @@ export function DashboardPage(_props: DashboardPageProps) {
         </Alert>
       )}
 
-      {/* Stats row */}
-      <div className={styles.statsGrid}>
-        {([
-          { icon: <FileText size={28} className="text-accent" />,     value: totals.tests,     label: t('totalTests')    },
-          { icon: <CheckCircle2 size={28} className="text-success" />, value: totals.correct,   label: t('correct')       },
-          { icon: <XCircle size={28} className="text-danger" />,      value: totals.incorrect, label: t('incorrect')     },
-          { icon: <Trophy size={28} className="text-warning" />,       value: `${totals.completed}/${totals.total}`, label: t('completed') },
-        ]).map(s => (
-          <StatCard key={s.label} icon={s.icon} value={s.value} label={s.label} />
-        ))}
+      {loadError && (
+        <GlassCard padding={20} className={styles.stateCard}>
+          <h3 className={styles.stateTitle}>{t('progressSyncIssue')}</h3>
+          <p className={styles.stateText}>{loadError}</p>
+          <div className={styles.stateActions}>
+            <Button onClick={retryLoad}>{t('retry')}</Button>
+            <Button variant="ghost" onClick={() => onNavigate('subjects')}>{t('goBack')}</Button>
+            <Button
+              variant="ghost"
+              onClick={() => { window.location.href = `mailto:${SUPPORT_EMAIL}` }}
+            >
+              {t('contactSupport')}
+            </Button>
+          </div>
+        </GlassCard>
+      )}
+
+      <div className={styles.metricsGrid}>
+        <GlassCard padding={18} className={styles.metricCard}>
+          <span className={styles.metricLabel}>{t('completion')}</span>
+          <div className={styles.metricValue}><Trophy size={18} /> {learningSummary.completionPct}%</div>
+          <span className={styles.metricMeta}>{learningSummary.completedTopics}/{learningSummary.totalTopics}</span>
+        </GlassCard>
+
+        <GlassCard padding={18} className={styles.metricCard}>
+          <span className={styles.metricLabel}>{t('streak')}</span>
+          <div className={styles.metricValue}><Flame size={18} /> {learningSummary.streakDays}</div>
+          <span className={styles.metricMeta}>{t('days')}</span>
+        </GlassCard>
+
+        <GlassCard padding={18} className={styles.metricCard}>
+          <span className={styles.metricLabel}>{t('timeOnTask')}</span>
+          <div className={styles.metricValue}><Clock3 size={18} /> {formatTimeOnTask(learningSummary.timeOnTaskSec)}</div>
+          <span className={styles.metricMeta}>
+            {learningSummary.lastActivityAt ? new Date(learningSummary.lastActivityAt).toLocaleDateString() : t('noActivityYet')}
+          </span>
+        </GlassCard>
       </div>
 
-      {/* Subject progress */}
-      <GlassCard padding={24} style={{ marginBottom: 24 }}>
-        <h3 className={styles.sectionTitle}>
-          <BarChart3 size={20} className="text-accent" /> {t('progress')}
-        </h3>
-        <div className={styles.progressList}>
-          {subjectStats.map(({ subject, completionPct }) => (
-            <div key={subject.id} className={styles.progressItem}>
-              <div className={styles.progressRow}>
-                <div className={styles.progressInfo}>
-                  <span className={styles.progressIcon}>{subject.icon}</span>
-                  <span className={styles.progressName}>{SUBJECT_NAMES[lang][subject.id]}</span>
-                </div>
-                <span className={styles.progressPct}>
-                  {completionPct}%
-                </span>
-              </div>
-              <ProgressBar value={completionPct} color={subject.gradient} />
+      {isHydrating ? (
+        <div className={styles.cardGrid}>
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <div key={idx} className={styles.skeletonCard}>
+              <div className={styles.skeletonLineLg} />
+              <div className={styles.skeletonLine} />
+              <div className={styles.skeletonLineSm} />
             </div>
           ))}
         </div>
-      </GlassCard>
+      ) : (
+        <div className={styles.cardGrid}>
+          {cards.map(card => (
+            <GlassCard key={card.id} padding={20} className={styles.actionCard}>
+              <div className={styles.cardHead}>
+                <span className={styles.cardIcon}>{card.icon}</span>
+                <h3 className={styles.cardTitle}>{card.title}</h3>
+              </div>
+              <p className={styles.cardBody}>{card.body}</p>
+              <Button fullWidth onClick={card.onClick} disabled={card.disabled}>
+                {card.action}
+              </Button>
+            </GlassCard>
+          ))}
+        </div>
+      )}
 
-      {/* Recent history */}
-      {user && (
-        <GlassCard padding={24}>
-          <h3 className={styles.sectionTitle}>
-             <Clock size={20} className="text-accent" /> {t('recentLessons')}
-          </h3>
-          {lessonHistory.length === 0 ? (
-            <p className="text-light text-sm">{t('noHistory')}</p>
-          ) : (
-            <div className={styles.historyList}>
-              {lessonHistory.slice(0, 6).map(h => {
-                const sub = SUBJECTS.find(s => s.id === h.subjectId)
-                return (
-                  <div key={`${h.topicId}_${h.timestamp}`} className={styles.historyItem}>
-                    <div className={styles.progressIcon}>{sub?.icon}</div>
-                    <div className={styles.historyInfo}>
-                      <span className={styles.historyTopic}>{TOPIC_NAMES[lang][h.topicId]}</span>
-                      <span className={styles.historyMeta}>
-                        {SUBJECT_NAMES[lang][h.subjectId]} · {relativeTime(h.timestamp, lang)}
-                      </span>
-                    </div>
-                    {h.quizScore !== undefined && (
-                      <span className={styles.historyScore}>{h.quizScore}/10</span>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          )}
+      {!isHydrating && lessonHistory.length === 0 && (
+        <GlassCard padding={20} className={`${styles.stateCard} ${styles.emptyStateCard}`}>
+          <h3 className={styles.stateTitle}>{t('startWithFirstLesson')}</h3>
+          <p className={styles.stateText}>{t('dashboardEmptyHint')}</p>
+          <Button onClick={() => onNavigate('subjects')}>{t('browseLessons')}</Button>
         </GlassCard>
       )}
     </div>

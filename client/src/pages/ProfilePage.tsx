@@ -1,11 +1,19 @@
-import { useLang }          from '../hooks'
-import { useAuth }           from '../hooks/useAuth'
-import { useSubjectStats }  from '../hooks/useSubjectStats'
-import { GlassCard }         from '../components/ui/GlassCard'
+import type { CSSProperties } from 'react'
+import { useLang } from '../hooks'
+import { useAuth } from '../hooks/useAuth'
+import { useSubjectStats } from '../hooks/useSubjectStats'
+import { GlassCard } from '../components/ui/GlassCard'
 import { Avatar, ProgressBar } from '../components/ui/index'
-import { SUBJECT_NAMES }    from '../constants'
-import { User, BarChart3 }  from 'lucide-react'
-import styles               from './ProfilePage.module.css'
+import { SUBJECT_NAMES } from '../constants'
+import {
+  User,
+  BarChart3,
+  CheckCircle2,
+  XCircle,
+  GraduationCap,
+  ClipboardCheck,
+} from 'lucide-react'
+import styles from './ProfilePage.module.css'
 
 export function ProfilePage() {
   const { t, lang }  = useLang()
@@ -15,7 +23,7 @@ export function ProfilePage() {
   return (
     <div className="page-content fade-in">
       <div className={styles.pageHeader}>
-        <h2 className={styles.title}><User size={22} style={{ display:'inline-block', verticalAlign:'middle', marginRight: 8 }} />{t('profile')}</h2>
+        <h2 className={styles.title}><User size={24} />{t('profile')}</h2>
       </div>
 
       {/* User card */}
@@ -28,39 +36,55 @@ export function ProfilePage() {
               <p className={styles.userEmail}>{user.email}</p>
             )}
             {isGuest && (
-              <span className={styles.guestChip}><User size={13} style={{ verticalAlign: 'middle', marginRight: 4 }} />{t('guestMode')}</span>
+              <span className={styles.guestChip}><User size={13} />{t('guestMode')}</span>
             )}
           </div>
         </div>
       </GlassCard>
 
       {/* Per-subject stats */}
-      <h3 className={styles.sectionTitle}><BarChart3 size={18} style={{ display:'inline-block', verticalAlign:'middle', marginRight: 8 }} />{t('subjects')} {t('progress')}</h3>
+      <h3 className={styles.sectionTitle}><BarChart3 size={18} />{t('subjects')} {t('progress')}</h3>
       <div className={styles.subjectList}>
         {subjectStats.map(({ subject, tests, correct, incorrect, pct, completed, total }) => (
-          <GlassCard key={subject.id} padding={22}>
+          <GlassCard
+            key={subject.id}
+            padding={20}
+            className={styles.subjectCard}
+            style={
+              {
+                '--subject-color': subject.color,
+                '--subject-gradient': subject.gradient,
+              } as CSSProperties
+            }
+          >
             {/* Subject header */}
             <div className={styles.subHead}>
               <div className={styles.subName}>
-                <span style={{ display:'flex', alignItems:'center', justifyContent:'center', width: 32, height: 32, background: subject.gradient, borderRadius: 8, color: '#fff', flexShrink: 0 }}>{subject.icon}</span>
-                <span className={styles.subLabel}>{SUBJECT_NAMES[lang][subject.id]}</span>
+                <span className={styles.subjectIconChip} style={{ background: subject.gradient }}>
+                  <span className={styles.subjectIconGlyph}>{subject.icon}</span>
+                </span>
+                <div className={styles.subTextBlock}>
+                  <span className={styles.subLabel}>{SUBJECT_NAMES[lang][subject.id]}</span>
+                  <span className={styles.subMeta}>{completed}/{total} {t('completed')}</span>
+                </div>
               </div>
               <span className={styles.subPct} style={{ color: subject.color }}>
-                {pct}%
+                {pct}% {t('progress')}
               </span>
             </div>
 
-            <ProgressBar value={pct} color={subject.gradient} height={8} />
+            <ProgressBar value={pct} color={subject.gradient} height={10} />
 
             {/* Stats grid */}
             <div className={styles.statsGrid}>
               {([
-                { label: t('totalTests'),     value: tests     },
-                { label: t('correct'),        value: correct   },
-                { label: t('incorrect'),      value: incorrect },
-                { label: t('completed'),      value: `${completed}/${total}` },
+                { icon: <ClipboardCheck size={14} />, label: t('totalTests'), value: tests },
+                { icon: <CheckCircle2 size={14} />, label: t('correct'), value: correct },
+                { icon: <XCircle size={14} />, label: t('incorrect'), value: incorrect },
+                { icon: <GraduationCap size={14} />, label: t('completed'), value: `${completed}/${total}` },
               ] as const).map(s => (
                 <div key={s.label} className={styles.statItem}>
+                  <span className={styles.statIcon}>{s.icon}</span>
                   <span className={styles.statVal}>{s.value}</span>
                   <span className={styles.statLabel}>{s.label}</span>
                 </div>

@@ -20,10 +20,10 @@ export function VideoPlayer({ videoId, title, watched, onMarkWatched }: VideoPla
       <GlassCard padding={24} style={{ marginBottom: 20 }}>
         <div className={styles.videoWrap}>
           <iframe
-            src={`https://www.youtube.com/embed/${videoId}`}
+            src={`https://www.youtube-nocookie.com/embed/${videoId}`}
             title={title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
             className={styles.iframe}
           />
         </div>

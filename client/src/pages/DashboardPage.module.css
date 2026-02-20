@@ -1,123 +1,198 @@
-.header { margin-bottom: 32px; }
-.title  { 
-  font-size: 28px; 
-  font-weight: 700; 
-  margin-bottom: 8px; 
-  letter-spacing: -0.02em;
+.header {
+  margin-bottom: 28px;
+}
+
+.title {
+  font-size: clamp(30px, 4vw, 42px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+  line-height: 1.08;
+}
+
+.subtitle {
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text-2);
+  max-width: 560px;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.metricCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 142px;
+}
+
+.metricLabel {
+  font-size: 12px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.metricValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 30px);
+  font-weight: 700;
+  line-height: 1;
   color: var(--text);
 }
-.subtitle { 
-  color: var(--text-2); 
-  font-size: 16px; 
-  line-height: 1.5;
+
+.metricMeta {
+  color: var(--text-3);
+  font-size: 13px;
+  font-weight: 600;
 }
 
-.statsGrid {
+.cardGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 20px; 
-  margin-bottom: 32px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
 }
 
-.sectionTitle { 
-  font-weight: 600; 
-  font-size: 18px; 
-  margin-bottom: 24px; 
-  color: var(--text-1);
+.actionCard {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 220px;
+}
+
+.actionCard :global(button) {
+  margin-top: auto;
+}
+
+.cardHead {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 11px;
 }
 
-.progressList { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 24px; 
+.cardIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent-light) 82%, transparent);
+  flex-shrink: 0;
 }
 
-.progressItem {
-  /* Renamed slightly to be clearer */
-  display: flex; 
+.cardTitle {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.cardBody {
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1.62;
+  min-height: 64px;
+}
+
+.stateCard {
+  margin-bottom: 22px;
+  display: flex;
   flex-direction: column;
-}
-
-.progressRow { 
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center; 
-  margin-bottom: 8px;
-}
-
-.progressInfo {
-  display: flex; 
-  align-items: center; 
   gap: 12px;
 }
 
-.progressIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
+.emptyStateCard {
+  margin-top: 2px;
+}
+
+.stateTitle {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.stateText {
   color: var(--text-2);
+  font-size: 14px;
+  line-height: 1.58;
 }
 
-.progressIcon svg {
-  width: 20px;
-  height: 20px;
-}
-
-.progressName { 
-  font-weight: 600; 
-  font-size: 15px; 
-  color: var(--text-1);
-}
-
-.progressPct {
-  font-size: 14px; 
-  font-weight: 600; 
-  color: var(--accent);
-}
-
-.historyList { display: flex; flex-direction: column; }
-
-.historyItem {
-  display: flex; align-items: center; gap: 16px;
-  padding: 16px 0;
-  border-bottom: 1px solid var(--surface-border);
-  transition: background var(--transition);
-  border-radius: var(--radius-sm);
-}
-
-.historyItem:hover {
-  background: rgba(255,255,255,0.03);
-  padding-left: 8px;
-  padding-right: 8px;
-  margin-left: -8px;
-  margin-right: -8px;
-}
-
-.historyItem:last-child { border-bottom: none; }
-
-.historyInfo { flex: 1; min-width: 0; }
-
-.historyTopic {
-  display: block; font-weight: 600; font-size: 15px;
-  margin-bottom: 4px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  color: var(--text-1);
-}
-
-.historyMeta { 
-  font-size: 13px; 
-  color: var(--text-3); 
+.stateActions {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.historyScore {
-  font-family: var(--font-mono); font-size: 13px;
-  color: var(--accent); font-weight: 700; flex-shrink: 0;
+.skeletonCard {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--surface-border);
+  background: var(--glass);
+  padding: 20px;
+  min-height: 220px;
+}
+
+.skeletonLine,
+.skeletonLineLg,
+.skeletonLineSm {
+  height: 11px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.16), rgba(148, 163, 184, 0.36), rgba(148, 163, 184, 0.16));
+  background-size: 240px 100%;
+  animation: shimmer 1.35s linear infinite;
+}
+
+.skeletonLineLg {
+  width: 68%;
+  margin-bottom: 18px;
+}
+
+.skeletonLine {
+  width: 92%;
+  margin-bottom: 11px;
+}
+
+.skeletonLineSm {
+  width: 52%;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -240px 0;
+  }
+
+  to {
+    background-position: 240px 0;
+  }
+}
+
+@media (max-width: 1120px) {
+  .metricsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .metricsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .actionCard {
+    min-height: 204px;
+  }
 }

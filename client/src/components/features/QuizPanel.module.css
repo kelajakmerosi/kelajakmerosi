@@ -1,84 +1,143 @@
 .header {
-  display: flex; align-items: center; margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
 }
 
-.counter { font-size: 13px; color: var(--text-3); white-space: nowrap; }
+.videoFirst {
+  margin-bottom: 16px;
+}
+
+.counter {
+  font-size: 12px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  font-weight: 600;
+}
 
 .pct {
-  font-size: 13px; color: var(--accent);
-  font-family: var(--font-mono); white-space: nowrap;
+  font-size: 12px;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  font-weight: 700;
 }
 
 .question {
-  font-size: 18px; font-weight: 700; line-height: 1.55;
-  margin-bottom: 24px;
+  font-size: clamp(20px, 3vw, 24px);
+  font-weight: 700;
+  line-height: 1.45;
+  margin-bottom: 14px;
+  letter-spacing: -0.015em;
 }
 
-.options { display: flex; flex-direction: column; gap: 12px; }
+.metaLine {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-bottom: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
 .option {
-  padding: 16px 20px; 
-  width: 100%; text-align: left;
-  border: 1.5px solid var(--surface-border);
-  border-radius: var(--radius-md); 
+  padding: 16px 18px;
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
   cursor: pointer;
-  background: var(--bg-2); 
+  background: color-mix(in srgb, var(--bg-2) 88%, transparent);
   font-size: 15px;
-  color: var(--text); 
+  color: var(--text);
   font-family: var(--font-main);
-  transition: all var(--transition);
-  display: flex; align-items: center; gap: 14px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: border-color var(--transition), background var(--transition), box-shadow var(--transition), transform var(--transition), color var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  line-height: 1.4;
 }
 
 .option:hover:not(:disabled) {
-  border-color: var(--accent);
-  background: var(--accent-light);
-  color: var(--accent);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(99,102,241,0.15);
+  border-color: color-mix(in srgb, var(--accent) 46%, var(--surface-border));
+  background: color-mix(in srgb, var(--accent-light) 58%, var(--bg-2));
+  color: var(--text);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 .optionSelected {
-  border-color: var(--accent) !important;
-  background: var(--accent-light) !important;
-  color: var(--accent) !important;
-  font-weight: 600;
-  box-shadow: 0 0 0 1px var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 62%, var(--surface-border)) !important;
+  background: color-mix(in srgb, var(--accent-light) 72%, var(--bg-2)) !important;
+  color: var(--text) !important;
+  font-weight: 700;
 }
 
 .optLabel {
-  display: flex; align-items: center; justify-content: center;
-  width: 28px; height: 28px; border-radius: 50%;
-  background: var(--bg-3); color: var(--text-2);
-  font-size: 13px; font-weight: 700; flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--bg-3);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
   transition: all var(--transition);
+  font-family: var(--font-mono);
 }
 
 .option:hover .optLabel,
 .optionSelected .optLabel {
-  background: var(--accent); color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
 }
 
 .optionCorrect {
-  border-color: var(--success) !important;
-  background: rgba(16,185,129,.1) !important;
+  border-color: color-mix(in srgb, var(--success) 60%, transparent) !important;
+  background: color-mix(in srgb, var(--success) 14%, transparent) !important;
   color: var(--success) !important;
 }
 
 .optionWrong {
-  border-color: var(--danger) !important;
-  background: rgba(239,68,68,.1) !important;
+  border-color: color-mix(in srgb, var(--danger) 60%, transparent) !important;
+  background: color-mix(in srgb, var(--danger) 14%, transparent) !important;
   color: var(--danger) !important;
 }
 
 .answeredNote {
-  font-size: 13px; color: var(--text-3);
-  margin-top: 24px; text-align: right;
-  font-weight: 500;
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 18px;
+  text-align: right;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .actions {
-  display: flex; justify-content: flex-end;
-  margin-top: 32px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+  gap: 10px;
+}
+
+@media (max-width: 720px) {
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions :global(button) {
+    width: 100%;
+  }
 }

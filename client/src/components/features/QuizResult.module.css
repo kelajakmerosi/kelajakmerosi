@@ -1,96 +1,226 @@
-.scoreCard { text-align: center; max-width: 480px; }
+.scoreCard {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto;
+}
 
 .circle {
-  width: 140px; height: 140px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 32px; position: relative;
-  box-shadow: 0 0 0 12px var(--bg-2), 0 0 0 14px var(--accent-light);
-  background: var(--bg-2);
+  width: 152px;
+  height: 152px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  position: relative;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent);
+  background: conic-gradient(var(--accent) var(--score-angle, 0deg), color-mix(in srgb, var(--bg-3) 80%, transparent) 0deg);
 }
 
 .circleInner {
-  position: absolute; inset: 0; border-radius: 50%;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
+  position: absolute;
+  inset: 11px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--bg-2) 95%, transparent);
+  border: 1px solid color-mix(in srgb, var(--surface-border) 75%, transparent);
 }
 
 .pctText {
-  font-size: 36px; font-weight: 800;
-  font-family: var(--font-main); 
-  color: var(--accent);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text);
   line-height: 1;
   margin-bottom: 4px;
+  font-family: var(--font-display);
 }
 
-.fraction { font-size: 14px; color: var(--text-3); font-weight: 500; }
+.fraction {
+  font-size: 13px;
+  color: var(--text-3);
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
 
-.resultIcon { 
+.resultIcon {
   display: flex;
   justify-content: center;
-  margin-bottom: 24px; 
-  color: var(--text-1);
-  animation: bounce 1s infinite; 
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  margin-bottom: 14px;
 }
 
 .resultMessage {
-  font-size: 24px;
+  font-size: clamp(24px, 3vw, 30px);
   font-weight: 700;
-  margin-bottom: 24px;
-  color: var(--text-1);
+  margin-bottom: 18px;
+  letter-spacing: -0.02em;
 }
 
-.statVal { 
-  display: block; 
-  font-weight: 700; 
-  font-size: 24px; 
-  color: var(--text);
-  margin-bottom: 4px;
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
 }
 
-.statLabel { 
-  font-size: 13px; 
-  color: var(--text-3); 
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 600;
-}
-
-.reviewItem { 
-  padding: 16px; 
+.stat {
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
-  margin-bottom: 16px;
-  background: var(--bg-3);
+  padding: 12px 10px;
+  background: color-mix(in srgb, var(--bg-2) 82%, transparent);
 }
 
-.reviewItem:last-child { margin-bottom: 0; }
+.statVal {
+  display: block;
+  font-weight: 700;
+  font-size: 24px;
+  margin-bottom: 4px;
+  line-height: 1;
+  font-family: var(--font-display);
+}
 
-.reviewQ { 
-  font-weight: 600; 
-  font-size: 15px; 
-  margin-bottom: 12px; 
+.statLabel {
+  font-size: 10px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.alert {
+  margin-bottom: 16px;
+}
+
+.primaryAction {
+  display: flex;
+  justify-content: center;
+}
+
+.attemptList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.attemptRow {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--bg-2) 82%, transparent);
+}
+
+.attemptLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.attemptScore {
+  font-size: 13px;
+  font-family: var(--font-mono);
+  font-weight: 700;
   color: var(--text);
+}
+
+.attemptTime {
+  justify-self: end;
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.reviewTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  margin-bottom: 14px;
+  letter-spacing: -0.01em;
+}
+
+.studyList {
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.reviewList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.reviewItem {
+  padding: 14px;
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--bg-2) 86%, transparent);
+}
+
+.reviewQ {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.reviewOpts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .reviewOpt {
-  padding: 10px 14px; border-radius: var(--radius-sm);
-  font-size: 14px; border: 1.5px solid var(--surface-border);
-  background: var(--bg-2); color: var(--text-2);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  border: 1px solid var(--surface-border);
+  background: color-mix(in srgb, var(--bg-2) 88%, transparent);
+  color: var(--text-2);
+  line-height: 1.45;
 }
 
 .correct {
-  border-color: var(--success) !important;
-  background: rgba(16,185,129,.1) !important;
+  border-color: color-mix(in srgb, var(--success) 52%, transparent) !important;
+  background: color-mix(in srgb, var(--success) 16%, transparent) !important;
   color: var(--success) !important;
 }
 
 .wrong {
-  border-color: var(--danger) !important;
-  background: rgba(239,68,68,.1) !important;
+  border-color: color-mix(in srgb, var(--danger) 52%, transparent) !important;
+  background: color-mix(in srgb, var(--danger) 16%, transparent) !important;
   color: var(--danger) !important;
+}
+
+.explanation {
+  margin-top: 10px;
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .attemptRow {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .attemptTime {
+    justify-self: start;
+  }
 }

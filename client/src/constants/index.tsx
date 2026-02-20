@@ -2,16 +2,17 @@ import {
   Calculator, 
   Zap, 
   Dna, 
+  FlaskConical,
 } from 'lucide-react'
-import type { Subject, LocaleKey, TopicStatus } from '../types'
+import type { Subject, LocaleKey, TopicStatus, ModuleTrack, Topic, Question, SubjectModule } from '../types'
 
 // ─── Subjects & Topics data ───────────────────────────────
-export const SUBJECTS: Subject[] = [
+const SUBJECT_SEEDS: Array<Omit<Subject, 'modules'>> = [
   {
     id: 'math',
-    icon: <Calculator size={28} />,
-    color: '#6366f1',
-    gradient: 'linear-gradient(135deg,#6366f1,#8b5cf6)',
+    icon: <Calculator size={22} strokeWidth={2.35} />,
+    color: '#3f68f7',
+    gradient: 'linear-gradient(135deg,#315df0,#4f83ff)',
     topics: [
       {
         id: 'algebra-basics',
@@ -65,9 +66,9 @@ export const SUBJECTS: Subject[] = [
   },
   {
     id: 'physics',
-    icon: <Zap size={28} />,
-    color: '#06b6d4',
-    gradient: 'linear-gradient(135deg,#06b6d4,#0ea5e9)',
+    icon: <Zap size={22} strokeWidth={2.35} />,
+    color: '#0c95d8',
+    gradient: 'linear-gradient(135deg,#0ea5e9,#06b6d4)',
     topics: [
       {
         id: 'mechanics',
@@ -121,9 +122,9 @@ export const SUBJECTS: Subject[] = [
   },
   {
     id: 'biology',
-    icon: <Dna size={28} />,
-    color: '#10b981',
-    gradient: 'linear-gradient(135deg,#10b981,#059669)',
+    icon: <Dna size={22} strokeWidth={2.35} />,
+    color: '#10936a',
+    gradient: 'linear-gradient(135deg,#10b981,#34d399)',
     topics: [
       {
         id: 'cell-biology',
@@ -177,9 +178,9 @@ export const SUBJECTS: Subject[] = [
   },
   {
     id: 'chemistry',
-    icon: '⚗',
-    color: '#f59e0b',
-    gradient: 'linear-gradient(135deg,#f59e0b,#ef4444)',
+    icon: <FlaskConical size={22} strokeWidth={2.35} />,
+    color: '#e67d13',
+    gradient: 'linear-gradient(135deg,#f59e0b,#fb923c)',
     topics: [
       {
         id: 'periodic-table',
@@ -233,6 +234,48 @@ export const SUBJECTS: Subject[] = [
   },
 ]
 
+const withAssessmentMeta = (topic: Topic): Topic => ({
+  ...topic,
+  estimatedMinutes: topic.estimatedMinutes ?? 12,
+  questions: topic.questions.map((q: Question, idx) => {
+    const difficulty: Question['difficulty'] =
+      idx < 4 ? 'easy' : idx < 8 ? 'medium' : 'hard'
+
+    return {
+      ...q,
+      difficulty,
+      concept: q.concept ?? topic.id,
+      explanation: q.explanation ?? `Correct answer: ${q.options[q.answer]}. Revisit this part of the lesson before retrying.`,
+    }
+  }),
+})
+
+const buildModules = (subjectId: string, topics: Topic[]): SubjectModule[] => {
+  const pivot = Math.max(1, Math.ceil(topics.length / 2))
+
+  return [
+    {
+      id: `${subjectId}-foundation`,
+      track: 'foundation' as ModuleTrack,
+      topicIds: topics.slice(0, pivot).map(t => t.id),
+    },
+    {
+      id: `${subjectId}-practice`,
+      track: 'practice' as ModuleTrack,
+      topicIds: topics.slice(pivot).map(t => t.id),
+    },
+  ].filter(module => module.topicIds.length > 0)
+}
+
+export const SUBJECTS: Subject[] = SUBJECT_SEEDS.map((subject) => {
+  const topics = subject.topics.map(withAssessmentMeta)
+  return {
+    ...subject,
+    topics,
+    modules: buildModules(subject.id, topics),
+  }
+})
+
 // ─── Topic & Subject name maps ────────────────────────────
 export const TOPIC_NAMES: Record<LocaleKey, Record<string, string>> = {
   uz: {
@@ -261,12 +304,27 @@ export const SUBJECT_NAMES: Record<LocaleKey, Record<string, string>> = {
   ru: { math:'Математика', physics:'Физика', biology:'Биология', chemistry:'Химия' },
 }
 
+export const MODULE_NAMES: Record<LocaleKey, Record<ModuleTrack, string>> = {
+  uz: {
+    foundation: 'Asosiy blok',
+    practice: 'Amaliy mustahkamlash',
+  },
+  en: {
+    foundation: 'Foundation Module',
+    practice: 'Practice Module',
+  },
+  ru: {
+    foundation: 'Базовый модуль',
+    practice: 'Практический модуль',
+  },
+}
+
 // ─── Status config ────────────────────────────────────────
 export const STATUS_COLORS: Record<TopicStatus, string> = {
-  completed:  '#6366f1',
-  inprogress: '#10b981',
-  onhold:     '#f59e0b',
-  locked:     '#8892b0',
+  completed:  '#2563eb',
+  inprogress: '#0f9a6c',
+  onhold:     '#d97706',
+  locked:     '#7d8aa5',
 }
 
 export const OPTION_LABELS = ['A','B','C','D'] as const

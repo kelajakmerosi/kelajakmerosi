@@ -14,7 +14,10 @@ export function useSubjectStats(subjectId?: string) {
 
       subject.topics.forEach(topic => {
         const d = getTopicData(subject.id, topic.id)
-        if (d.quizScore !== undefined) { tests += 10; correct += d.quizScore }
+        if (d.quizScore !== undefined) {
+          tests += topic.questions.length
+          correct += d.quizScore
+        }
         if (d.status === 'completed') completed++
       })
 

@@ -1,3 +1,30 @@
-.header   { margin-bottom: 24px; }
-.title    { font-size: 26px; font-weight: 800; margin-bottom: 4px; }
-.subtitle { color: var(--text-2); font-size: 15px; }
+.backButton {
+  margin-bottom: 20px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: clamp(28px, 3.8vw, 40px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: var(--text-2);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.syncWarning {
+  margin-bottom: 16px;
+  justify-content: space-between;
+}
+
+.syncWarning :global(button) {
+  margin-left: auto;
+}

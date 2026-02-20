@@ -4,7 +4,7 @@
  */
 import type { TopicProgressMap, LessonHistoryEntry, TopicProgressData, TopicStatus } from '../types'
 
-const MAX_HISTORY = 20
+const MAX_HISTORY = 80
 
 // ─── Storage key helpers ──────────────────────────────────
 const progressKey  = (userId: string) => `progress_${userId}`
@@ -52,11 +52,14 @@ export const lessonService = {
     }
   },
 
+  saveHistory: (userId: string, history: LessonHistoryEntry[]): void => {
+    localStorage.setItem(historyKey(userId), JSON.stringify(history.slice(0, MAX_HISTORY)))
+  },
+
   addHistory: (userId: string, entry: Omit<LessonHistoryEntry, 'timestamp'>): LessonHistoryEntry[] => {
-    const prev    = lessonService.getHistory(userId)
-    const filtered = prev.filter(h => h.topicId !== entry.topicId)
-    const next    = [{ ...entry, timestamp: Date.now() }, ...filtered].slice(0, MAX_HISTORY)
-    localStorage.setItem(historyKey(userId), JSON.stringify(next))
+    const prev = lessonService.getHistory(userId)
+    const next = [{ ...entry, timestamp: Date.now() }, ...prev].slice(0, MAX_HISTORY)
+    lessonService.saveHistory(userId, next)
     return next
   },
 }

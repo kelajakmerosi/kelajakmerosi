@@ -16,7 +16,7 @@ export function SubjectsPage({ onSubjectSelect }: SubjectsPageProps) {
   return (
     <div className="page-content fade-in">
       <div className={styles.header}>
-        <h2 className={styles.title}><BookOpen size={22} style={{ display:'inline-block', verticalAlign:'middle', marginRight: 8 }} />{t('subjects')}</h2>
+        <h2 className={styles.title}><BookOpen size={24} />{t('subjects')}</h2>
         <p className={styles.subtitle}>{t('allTopics')}</p>
       </div>
 

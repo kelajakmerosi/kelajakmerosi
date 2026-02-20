@@ -1,19 +1,29 @@
 .videoWrap {
   position: relative;
   padding-bottom: 56.25%;
-  height: 0; overflow: hidden;
+  height: 0;
+  overflow: hidden;
   border-radius: var(--radius-md);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--shadow-sm);
 }
 
 .iframe {
-  position: absolute; top: 0; left: 0;
-  width: 100%; height: 100%;
-  border: none; border-radius: var(--radius-md);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: var(--radius-md);
 }
 
 .watchRow {
-  display: flex; justify-content: center;
-  margin-top: 4px;
+  display: flex;
+  justify-content: center;
+  margin-top: 2px;
 }
 
-.watchedAlert { justify-content: center; }
+.watchedAlert {
+  justify-content: center;
+}
