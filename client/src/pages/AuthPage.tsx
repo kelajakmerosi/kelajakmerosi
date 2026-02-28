@@ -886,21 +886,23 @@ export function AuthPage() {
             </div>
 
             <div className={styles.modalActions}>
-              <Button
-                variant="ghost"
-                className={styles.modalSecondaryBtn}
-                onClick={closeOtpModal}
-              >
-                {t('changePhone')}
-              </Button>
-              <Button
-                variant="ghost"
-                className={styles.modalSecondaryBtn}
-                onClick={() => void handleOtpResend()}
-                disabled={resendLoading || resendCountdown > 0}
-              >
-                {resendLoading ? t('authLoading') : t('resendCode')}
-              </Button>
+              <div className={styles.modalSecondaryRow}>
+                <Button
+                  variant="ghost"
+                  className={styles.modalSecondaryBtn}
+                  onClick={closeOtpModal}
+                >
+                  {t('changePhone')}
+                </Button>
+                <Button
+                  variant="ghost"
+                  className={styles.modalSecondaryBtn}
+                  onClick={() => void handleOtpResend()}
+                  disabled={resendLoading || resendCountdown > 0}
+                >
+                  {resendLoading ? t('authLoading') : t('resendCode')}
+                </Button>
+              </div>
               <Button
                 fullWidth
                 className={styles.modalPrimaryBtn}

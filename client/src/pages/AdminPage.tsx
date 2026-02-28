@@ -7,7 +7,7 @@ import { useAuth } from '../hooks/useAuth'
 import styles from './AdminPage.module.css'
 
 export function AdminPage(): JSX.Element {
-  const { user: currentUser } = useAuth()
+  const { user: currentUser, logout } = useAuth()
   const [info, setInfo] = useState<SystemInfo | null>(null)
   const [users, setUsers] = useState<AdminUserSummary[]>([])
   const [loading, setLoading] = useState(true)
@@ -52,17 +52,17 @@ export function AdminPage(): JSX.Element {
   )
 
   const handleDelete = async (targetUser: AdminUserSummary) => {
-    if (targetUser.id === currentUser?.id) {
-      setError('You cannot delete your own account.')
-      return
-    }
-
+    const isSelfDelete = targetUser.id === currentUser?.id
     setDeletingUserId(targetUser.id)
     setError(null)
     setSuccess(null)
     try {
       await adminService.deleteUser(targetUser.id)
       setUsers((prev) => prev.filter((user) => user.id !== targetUser.id))
+      if (isSelfDelete) {
+        logout()
+        return
+      }
       setSuccess(`User "${targetUser.name}" deleted.`)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to delete user'
@@ -134,6 +134,7 @@ export function AdminPage(): JSX.Element {
                     <th>Email</th>
                     <th>Phone</th>
                     <th>Access</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -143,6 +144,40 @@ export function AdminPage(): JSX.Element {
                       <td>{user.email ?? '—'}</td>
                       <td>{user.phone ?? '—'}</td>
                       <td><span className={styles.adminTag}>Admin</span></td>
+                      <td>
+                        {pendingDeleteUserId === user.id ? (
+                          <div className={styles.actionRow}>
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              disabled={deletingUserId === user.id}
+                              onClick={() => void handleDelete(user)}
+                            >
+                              {deletingUserId === user.id ? 'Deleting...' : 'Confirm'}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={deletingUserId === user.id}
+                              onClick={() => setPendingDeleteUserId(null)}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => {
+                              setPendingDeleteUserId(user.id)
+                              setError(null)
+                              setSuccess(null)
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

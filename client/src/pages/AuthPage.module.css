@@ -106,7 +106,7 @@
   transition: none;
 }
 
-.modeTab:hover {
+.modeTab:not(.modeTabActive):hover {
   color: var(--text-2);
 }
 
@@ -353,13 +353,20 @@
 
 .modalActions {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modalSecondaryRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
 
 .modalSecondaryBtn {
   min-height: 42px;
   color: var(--text-2);
+  width: 100%;
 }
 
 .modalPrimaryBtn {

@@ -28,14 +28,7 @@ exports.getAdminUsers = async (req, res, next) => {
 exports.deleteAdminUser = async (req, res, next) => {
   try {
     const { userId } = req.params
-    if (req.user?.id === userId) {
-      return sendError(res, {
-        status: 400,
-        code: ERROR_CODES.ADMIN_SELF_DELETE_FORBIDDEN,
-        message: 'You cannot delete your own account from admin panel.',
-        requestId: req.id,
-      })
-    }
+    const selfDeleted = req.user?.id === userId
 
     const deleted = await User.deleteById(userId)
     if (!deleted) {
@@ -47,7 +40,7 @@ exports.deleteAdminUser = async (req, res, next) => {
       })
     }
 
-    return sendSuccess(res, { deleted: true, userId: deleted.id })
+    return sendSuccess(res, { deleted: true, userId: deleted.id, selfDeleted })
   } catch (err) {
     return next(err)
   }
