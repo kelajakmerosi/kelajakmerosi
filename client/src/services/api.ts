@@ -1,5 +1,4 @@
 import { z, type ZodType } from 'zod'
-import { ErrorEnvelopeSchema } from '@shared/contracts/client'
 
 const RAW_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api'
 const BASE_URL = RAW_BASE_URL.replace(/\/$/, '').endsWith('/api')
@@ -16,6 +15,15 @@ interface RequestOptions {
 const EnvelopeSchema = z.object({
   data: z.unknown(),
   meta: z.record(z.unknown()).optional(),
+})
+
+const ErrorEnvelopeSchema = z.object({
+  error: z.object({
+    code: z.string(),
+    message: z.string(),
+    requestId: z.string().optional(),
+    details: z.unknown().optional(),
+  }),
 })
 
 let onAuthFailure: (() => void) | null = null
