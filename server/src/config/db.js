@@ -36,6 +36,8 @@ const runMigrations = async () => {
       id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       name        TEXT NOT NULL,
       email       TEXT NOT NULL UNIQUE,
+      phone       TEXT UNIQUE,
+      phone_verified BOOLEAN DEFAULT FALSE,
       password    TEXT,
       avatar      TEXT DEFAULT '',
       role        TEXT DEFAULT 'student' CHECK (role IN ('student', 'admin')),
@@ -44,6 +46,20 @@ const runMigrations = async () => {
       created_at  TIMESTAMPTZ DEFAULT NOW(),
       updated_at  TIMESTAMPTZ DEFAULT NOW()
     );
+
+    ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS phone TEXT,
+      ADD COLUMN IF NOT EXISTS phone_verified BOOLEAN DEFAULT FALSE,
+      ADD COLUMN IF NOT EXISTS first_name TEXT,
+      ADD COLUMN IF NOT EXISTS last_name TEXT,
+      ADD COLUMN IF NOT EXISTS password_set_at TIMESTAMPTZ;
+
+    ALTER TABLE users
+      ALTER COLUMN email DROP NOT NULL;
+
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_users_phone_unique
+      ON users(phone)
+      WHERE phone IS NOT NULL;
 
     CREATE TABLE IF NOT EXISTS subjects (
       id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -101,6 +117,39 @@ const runMigrations = async () => {
       created_at    TIMESTAMPTZ DEFAULT NOW(),
       PRIMARY KEY (user_id, activity_date)
     );
+
+    CREATE TABLE IF NOT EXISTS phone_auth_codes (
+      id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      phone         TEXT NOT NULL,
+      code_hash     TEXT NOT NULL,
+      expires_at    TIMESTAMPTZ NOT NULL,
+      attempts      INT DEFAULT 0,
+      max_attempts  INT DEFAULT 5,
+      consumed_at   TIMESTAMPTZ,
+      request_ip    TEXT,
+      created_at    TIMESTAMPTZ DEFAULT NOW()
+    );
+
+    ALTER TABLE phone_auth_codes
+      ADD COLUMN IF NOT EXISTS purpose TEXT DEFAULT 'legacy_login',
+      ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES users(id) ON DELETE SET NULL;
+
+    ALTER TABLE phone_auth_codes
+      DROP CONSTRAINT IF EXISTS phone_auth_codes_purpose_check;
+
+    ALTER TABLE phone_auth_codes
+      ADD CONSTRAINT phone_auth_codes_purpose_check
+      CHECK (purpose IN ('signup', 'password_reset', 'legacy_password_setup', 'legacy_login'));
+
+    CREATE INDEX IF NOT EXISTS idx_phone_auth_codes_phone_created
+      ON phone_auth_codes(phone, created_at DESC);
+
+    CREATE INDEX IF NOT EXISTS idx_phone_auth_codes_phone_purpose_created
+      ON phone_auth_codes(phone, purpose, created_at DESC);
+
+    CREATE INDEX IF NOT EXISTS idx_phone_auth_codes_phone_active
+      ON phone_auth_codes(phone, expires_at DESC)
+      WHERE consumed_at IS NULL;
 
     CREATE INDEX IF NOT EXISTS idx_user_lesson_progress_user
       ON user_lesson_progress(user_id);

@@ -44,8 +44,13 @@ export interface Subject {
 export interface User {
   id:    string
   name:  string
-  email: string
+  firstName?: string | null
+  lastName?: string | null
+  email?: string | null
+  phone?: string | null
+  phoneVerified?: boolean
   role?: 'student' | 'admin'
+  passwordSetAt?: string | null
   token: string            // JWT-ready
 }
 
@@ -142,8 +147,21 @@ export interface LanguageContextValue {
 }
 
 export interface AuthContextValue extends AuthState {
-  login:             (emailOrUsername: string, password: string) => Promise<User>
-  register:          (name: string, email: string, password: string) => Promise<User>
+  signupRequestCode: (phone: string) => Promise<void>
+  signupConfirm: (payload: {
+    firstName: string
+    lastName: string
+    phone: string
+    password: string
+    code: string
+  }) => Promise<User>
+  loginWithPassword: (payload: { phone: string; password: string }) => Promise<User>
+  legacyLoginOtpRequestCode: (phone: string) => Promise<void>
+  legacyLoginOtpConfirm: (payload: { phone: string; code: string }) => Promise<{ user: User; requiresPasswordSetup: boolean }>
+  passwordResetRequestCode: (phone: string) => Promise<void>
+  passwordResetConfirmCode: (payload: { phone: string; code: string }) => Promise<{ resetToken: string; resetTokenTtlSec: number }>
+  passwordResetComplete: (payload: { phone: string; resetToken: string; newPassword: string }) => Promise<void>
+  passwordSetupComplete: (newPassword: string) => Promise<User>
   loginWithGoogle:   (idToken: string) => Promise<User>
   logout:            () => void
   continueAsGuest:   () => void

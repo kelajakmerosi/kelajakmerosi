@@ -26,7 +26,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -69,6 +69,40 @@
 .empty {
   color: var(--text-2);
   padding: 18px;
+}
+
+.sectionHeader {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 18px;
+}
+
+.sectionSubtitle {
+  margin: 6px 0 0;
+  color: var(--text-3);
+  font-size: 13px;
+}
+
+.actionRow {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.adminTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent-light) 72%, var(--bg-2));
+  border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--surface-border));
 }
 
 @media (max-width: 960px) {

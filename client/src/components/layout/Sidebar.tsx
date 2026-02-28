@@ -29,7 +29,7 @@ const resolveActivePage = (pathname: string): PageId => {
 }
 
 export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
-  const { user, logout } = useAuth()
+  const { user, isGuest, logout } = useAuth()
   const { t } = useLang()
   const navigate = useNavigate()
   const location = useLocation()
@@ -86,14 +86,22 @@ export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
                 <LogOut size={16} /> {t('logout')}
               </Button>
             </>
-          ) : (
+          ) : isGuest ? (
             <div>
               <span className={styles.guestBadge}>
                 <User size={14} /> Guest
               </span>
-              <p className={styles.guestNote}>{t('guestWarning')}</p>
+              <Button
+                variant="primary"
+                size="sm"
+                fullWidth
+                onClick={logout}
+                style={{ marginTop: 8, justifyContent: 'center' }}
+              >
+                {t('login')}
+              </Button>
             </div>
-          )}
+          ) : null}
         </div>
       </aside>
     </>

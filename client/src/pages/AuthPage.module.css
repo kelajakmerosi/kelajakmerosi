@@ -36,7 +36,7 @@
 
 .card {
   width: 100%;
-  max-width: 440px;
+  max-width: 460px;
   padding: 34px;
   position: relative;
   z-index: 1;
@@ -45,7 +45,7 @@
 
 .header {
   text-align: center;
-  margin-bottom: 22px;
+  margin-bottom: 16px;
 }
 
 .logoWrap {
@@ -55,32 +55,137 @@
 .tagline {
   color: var(--text-2);
   font-size: 14px;
-  margin-top: 8px;
+  margin-top: 6px;
   line-height: 1.5;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 18px;
+  gap: 10px;
+  margin-top: 14px;
 }
 
-.switchNote {
-  text-align: center;
-  margin-top: 18px;
-  font-size: 13px;
-  color: var(--text-3);
+.modeSegment {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 4px;
+  background: color-mix(in srgb, var(--bg-2) 86%, transparent);
+  border: 1px solid color-mix(in srgb, var(--surface-border) 78%, transparent);
+  border-radius: 14px;
 }
 
-.switchLink {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--accent);
+.modeIndicator {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  border-radius: 10px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 96%, #2ea7ff), #1b82dc);
+  box-shadow: 0 6px 16px rgba(27, 130, 220, 0.24);
+  transition: transform 180ms ease;
+}
+
+.modeIndicatorSignup {
+  transform: translateX(100%);
+}
+
+.modeTab {
+  position: relative;
+  z-index: 1;
+  min-height: 40px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-2);
   font-weight: 700;
-  font-family: var(--font-main);
+  font-size: 15px;
+  cursor: pointer;
+  transition: none;
+}
+
+.modeTab:hover {
+  color: var(--text-2);
+}
+
+.modeTab:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 54%, white);
+  outline-offset: 1px;
+}
+
+.modeTabActive {
+  color: #fff;
+}
+
+.stepHint {
+  margin: 2px 2px 4px;
+  color: var(--text-3);
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.nameRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.inlineLinks {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.inlineLinkButton {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: var(--accent);
+  font-weight: 600;
   font-size: 13px;
+  cursor: pointer;
+}
+
+.inlineLinkButton:hover {
+  text-decoration: underline;
+}
+
+.passwordField {
+  position: relative;
+}
+
+.passwordInput {
+  padding-right: 44px;
+}
+
+.passwordToggle {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.passwordToggle:hover {
+  color: var(--text);
+}
+
+.passwordToggle:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 46%, white);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
 .orRow {
@@ -104,72 +209,197 @@
   font-weight: 700;
 }
 
+.notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  border: 1px solid transparent;
+}
+
+.noticeDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.noticeInfo {
+  color: color-mix(in srgb, var(--accent) 72%, var(--text));
+  background: color-mix(in srgb, var(--accent-light) 16%, var(--bg-2));
+  border-color: color-mix(in srgb, var(--accent) 34%, var(--surface-border));
+}
+
+.noticeInfo .noticeDot {
+  background: color-mix(in srgb, var(--accent) 78%, #2196f3);
+}
+
+.noticeError {
+  color: #b4232a;
+  background: color-mix(in srgb, #ef4444 10%, var(--bg-2));
+  border-color: color-mix(in srgb, #ef4444 35%, var(--surface-border));
+}
+
+.noticeError .noticeDot {
+  background: #ef4444;
+}
+
 .googleWrap {
   width: 100%;
 }
 
 .googleFallbackBtn {
   min-height: 46px;
-  border: 1px solid var(--surface-border);
-  background: color-mix(in srgb, var(--bg-2) 88%, transparent);
-  color: var(--text);
-  font-weight: 700;
+  border: 1px solid color-mix(in srgb, var(--surface-border) 90%, transparent);
+  background: color-mix(in srgb, var(--bg-2) 93%, transparent);
+  color: var(--text-2);
+  font-weight: 600;
   font-size: 14px;
   gap: 10px;
 }
 
 .googleFallbackBtn:hover {
-  background: color-mix(in srgb, var(--accent-light) 58%, var(--bg-2));
-  border-color: color-mix(in srgb, var(--accent) 42%, var(--surface-border));
+  background: color-mix(in srgb, var(--bg-2) 78%, var(--accent-light));
+  border-color: color-mix(in srgb, var(--accent) 26%, var(--surface-border));
   color: var(--text);
 }
 
-.googleLoading {
-  width: 100%;
-  height: 46px;
-  border-radius: var(--radius-md);
-  background: var(--bg-2);
+.guestBtn {
+  color: var(--text-2);
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-2);
-  font-size: 13px;
-  border: 1px solid var(--surface-border);
+  background: rgba(8, 17, 35, 0.42);
+  backdrop-filter: blur(2px);
+  z-index: 60;
+  padding: 16px;
 }
 
-.loadingInline {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.modal {
+  width: 100%;
+  max-width: 460px;
+  border-radius: 22px;
+  border: 1px solid color-mix(in srgb, var(--surface-border) 88%, transparent);
+  background: color-mix(in srgb, var(--surface) 92%, white);
+  box-shadow: 0 24px 54px rgba(12, 24, 48, 0.22);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.modalHeader p {
+  margin: 8px 0 0;
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.otpGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 8px;
 }
 
-.spinner {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.48);
-  border-top-color: #ffffff;
-  animation: spin 0.75s linear infinite;
+.otpBox {
+  height: 50px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--surface-border) 92%, transparent);
+  background: color-mix(in srgb, var(--bg-2) 92%, transparent);
+  color: var(--text);
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
 }
 
-.googleFallbackBtn .spinner {
-  border-color: rgba(107, 114, 128, 0.38);
-  border-top-color: var(--text);
+.otpBox:focus-visible {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 64%, white);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-light) 44%, transparent);
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+.otpBoxFilled {
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--surface-border));
+  background: color-mix(in srgb, var(--accent-light) 20%, var(--bg-2));
 }
 
-@media (max-width: 480px) {
+.otpBoxError {
+  border-color: color-mix(in srgb, var(--danger) 75%, #ef4444);
+  box-shadow: 0 0 0 2px color-mix(in srgb, #ef4444 18%, transparent);
+}
+
+.modalMeta {
+  font-size: 12px;
+  color: var(--text-3);
+  text-align: center;
+}
+
+.modalActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.modalSecondaryBtn {
+  min-height: 42px;
+  color: var(--text-2);
+}
+
+.modalPrimaryBtn {
+  min-height: 44px;
+}
+
+@media (max-width: 560px) {
   .page {
     padding: 16px;
   }
 
   .card {
     padding: 24px 20px;
+    max-width: 100%;
+  }
+
+  .nameRow {
+    grid-template-columns: 1fr;
+  }
+
+  .inlineLinks {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .modalOverlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal {
+    max-width: none;
+    width: 100%;
+    min-height: min(92vh, 760px);
+    border-radius: 18px 18px 0 0;
+    padding: 18px 16px 20px;
+  }
+
+  .otpBox {
+    height: 46px;
+    font-size: 20px;
   }
 }
