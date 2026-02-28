@@ -10,7 +10,7 @@
     "dev": "concurrently -n CLIENT,SERVER -c cyan,green \"npm run dev:client\" \"npm run dev:server\"",
     "build:client": "cd client && npm run build",
     "build:server": "npm install --prefix server && npm run build --prefix server",
-    "start:server": "npm start --prefix server",
+    "start:server": "NODE_PATH=./server/node_modules npm start --prefix server",
     "typecheck": "cd client && npm run typecheck",
     "install:all": "cd client && npm install && cd ../server && npm install"
   },
