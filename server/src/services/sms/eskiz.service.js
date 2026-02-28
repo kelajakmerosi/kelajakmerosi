@@ -59,10 +59,15 @@ const getToken = async () => {
 
 const sendOtp = async (phone, code) => {
   const token = await getToken()
-  const template = process.env.ESKIZ_OTP_TEXT_TEMPLATE || DEFAULT_OTP_TEMPLATE
+  const templateRaw = process.env.ESKIZ_OTP_TEXT_TEMPLATE || DEFAULT_OTP_TEMPLATE
+  const template = String(templateRaw).trim().replace(/\s+/g, ' ')
+  const codeString = String(code)
+
   const message = template.includes('{code}')
-    ? template.replace(/\{code\}/g, String(code))
-    : `${template} ${code}`
+    ? template.replace(/\{code\}/g, codeString)
+    : template.includes('000000')
+      ? template.replace(/000000/g, codeString)
+      : `${template} ${codeString}`
 
   const form = new URLSearchParams()
   form.set('mobile_phone', phone.replace(/^\+/, ''))
