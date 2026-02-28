@@ -1,4 +1,13 @@
-const { z } = require('zod')
+let z
+try {
+  ;({ z } = require('zod'))
+} catch (error) {
+  try {
+    ;({ z } = require('../../server/node_modules/zod'))
+  } catch (fallbackError) {
+    throw error
+  }
+}
 
 const ErrorEnvelopeSchema = z.object({
   error: z.object({
