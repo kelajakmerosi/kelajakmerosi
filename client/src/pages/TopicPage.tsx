@@ -111,20 +111,24 @@ export function TopicPage({ subjectId, topicId, onBack }: TopicPageProps) {
       </div>
 
       {tab === 'video' && (
-        <VideoPlayer
-          videoId={topic.videoId}
-          title={TOPIC_NAMES[lang][topicId]}
-          watched={videoWatched}
-          onMarkWatched={handleMarkVideoWatched}
-        />
+        <div id="tab-panel-video" role="tabpanel" aria-label="Video lesson">
+          <VideoPlayer
+            videoId={topic.videoId}
+            title={TOPIC_NAMES[lang][topicId]}
+            watched={videoWatched}
+            onMarkWatched={handleMarkVideoWatched}
+          />
+        </div>
       )}
 
       {tab === 'quiz' && (
-        <QuizPanel
-          topic={topic}
-          subjectId={subjectId}
-          videoWatched={videoWatched}
-        />
+        <div id="tab-panel-quiz" role="tabpanel" aria-label="Quiz">
+          <QuizPanel
+            topic={topic}
+            subjectId={subjectId}
+            videoWatched={videoWatched}
+          />
+        </div>
       )}
     </div>
   )

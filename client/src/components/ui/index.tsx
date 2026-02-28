@@ -95,10 +95,14 @@ interface Tab { id: string; label: string }
 interface TabsProps { tabs: Tab[]; active: string; onChange: (id: string) => void }
 export function Tabs({ tabs, active, onChange }: TabsProps) {
   return (
-    <div className={styles.tabs}>
+    <div className={styles.tabs} role="tablist" aria-label="Topic sections">
       {tabs.map(tab => (
         <button
           key={tab.id}
+          type="button"
+          role="tab"
+          aria-selected={active === tab.id}
+          aria-controls={`tab-panel-${tab.id}`}
           className={cn(styles.tab, active === tab.id && styles.tabActive)}
           onClick={() => onChange(tab.id)}
         >

@@ -13,6 +13,11 @@ const logger = pino({
 const httpLogger = pinoHttp({
   logger,
   genReqId: (req) => req.headers['x-request-id'] || randomUUID(),
+  customProps: (req) => ({
+    route: req.originalUrl,
+    method: req.method,
+    userId: req.user?.id,
+  }),
   customLogLevel: (_req, res, err) => {
     if (err || res.statusCode >= 500) return 'error'
     if (res.statusCode >= 400) return 'warn'

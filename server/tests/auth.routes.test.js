@@ -52,8 +52,8 @@ describe('Auth routes integration', () => {
       .send({ name: 'Ali', email: 'ali@example.com', password: 'Password123!' })
 
     expect(res.status).toBe(201)
-    expect(res.body).toHaveProperty('token')
-    expect(res.body).toHaveProperty('user.email', 'ali@example.com')
+    expect(res.body).toHaveProperty('data.token')
+    expect(res.body).toHaveProperty('data.user.email', 'ali@example.com')
   })
 
   it('rejects login with invalid credentials', async () => {
@@ -64,14 +64,14 @@ describe('Auth routes integration', () => {
       .send({ email: 'bad@example.com', password: 'wrong' })
 
     expect(res.status).toBe(401)
-    expect(res.body.code).toBe('INVALID_CREDENTIALS')
+    expect(res.body.error.code).toBe('INVALID_CREDENTIALS')
   })
 
   it('rejects google auth when id token is missing', async () => {
     const res = await request(app).post('/api/auth/google').send({})
 
     expect(res.status).toBe(400)
-    expect(res.body.code).toBe('GOOGLE_ID_TOKEN_REQUIRED')
+    expect(res.body.error.code).toBe('VALIDATION_ERROR')
   })
 
   it('authenticates with google token successfully', async () => {
@@ -98,7 +98,7 @@ describe('Auth routes integration', () => {
       .send({ idToken: 'mock-id-token' })
 
     expect(res.status).toBe(200)
-    expect(res.body).toHaveProperty('token')
-    expect(res.body).toHaveProperty('user.email', 'google@example.com')
+    expect(res.body).toHaveProperty('data.token')
+    expect(res.body).toHaveProperty('data.user.email', 'google@example.com')
   })
 })

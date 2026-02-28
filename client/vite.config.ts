@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 
@@ -17,7 +17,18 @@ export default defineConfig({
       '@utils':     resolve(__dirname, 'src/utils'),
       '@styles':    resolve(__dirname, 'src/styles'),
       '@types':     resolve(__dirname, 'src/types'),
+      '@shared':    resolve(__dirname, '../shared'),
     },
+  },
+  server: {
+    fs: {
+      allow: [resolve(__dirname, '..')],
+    },
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './src/test/setup.ts',
   },
   base: './', 
 })

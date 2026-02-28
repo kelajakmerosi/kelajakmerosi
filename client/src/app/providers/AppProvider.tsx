@@ -28,12 +28,14 @@ const toProgressErrorMessage = (err: unknown): string => {
   const raw = err instanceof Error ? err.message : String(err ?? '')
   const normalized = raw.toLowerCase()
 
+  if (normalized.includes('failed to fetch') || normalized.includes('networkerror')) {
+    return 'Progress sync failed: API server is unreachable. Start server with `cd server && npm run dev`.'
+  }
+
   if (
-    normalized.includes('failed to fetch') ||
-    normalized.includes('networkerror') ||
     normalized.includes('cors')
   ) {
-    return 'Progress sync failed. Check API server and CORS CLIENT_URL configuration.'
+    return 'Progress sync failed due to CORS. Check server CLIENT_URL and allowed origins.'
   }
 
   return raw || 'Progress sync failed. Please retry.'

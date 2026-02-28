@@ -1,0 +1,26 @@
+.input {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px;
+  background: var(--bg-2);
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  font-family: var(--font-main);
+  font-size: 14px;
+  color: var(--text);
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--text-3);
+}
+
+.input:focus {
+  border-color: color-mix(in srgb, var(--accent) 58%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.inputError {
+  border-color: color-mix(in srgb, var(--danger) 60%, transparent) !important;
+}

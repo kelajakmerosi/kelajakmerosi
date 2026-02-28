@@ -27,7 +27,8 @@
       "@locales/*":   ["src/locales/*"],
       "@utils/*":     ["src/utils/*"],
       "@styles/*":    ["src/styles/*"],
-      "@types/*":     ["src/types/*"]
+      "@types/*":     ["src/types/*"],
+      "@shared/*":    ["../shared/*"]
     }
   },
   "include": ["src"],

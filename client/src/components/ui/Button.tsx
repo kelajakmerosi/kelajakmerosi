@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
-import styles from '../../styles/components.module.css'
+import styles from './Button.module.css'
 import { cn } from '../../utils'
 
 type Variant = 'primary' | 'ghost' | 'danger' | 'icon' | 'nav'
@@ -37,8 +37,11 @@ export function Button({
   children,
   ...rest
 }: ButtonProps) {
+  const safeType = rest.type ?? 'button'
+
   return (
     <button
+      type={safeType}
       className={cn(
         styles.btn,
         variantMap[variant],

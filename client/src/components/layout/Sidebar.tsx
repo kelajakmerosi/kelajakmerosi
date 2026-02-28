@@ -1,51 +1,63 @@
+import { useLocation, useNavigate } from 'react-router-dom'
 import type { PageId } from '../../types'
 import { useAuth } from '../../hooks/useAuth'
 import { useLang } from '../../hooks'
-import { cn }      from '../../utils'
-import { Avatar }  from '../ui/index'
-import { Button }  from '../ui/Button'
-import styles      from './Sidebar.module.css'
-
-interface SidebarProps {
-  activePage:    PageId
-  navigate:      (page: PageId) => void
-  mobileOpen:    boolean
-  onClose:       () => void
-}
-
+import { cn } from '../../utils'
+import { Avatar } from '../ui/index'
+import { Button } from '../ui/Button'
+import styles from './Sidebar.module.css'
 import { LayoutDashboard, BookOpen, User, LogOut } from 'lucide-react'
 
+interface SidebarProps {
+  mobileOpen: boolean
+  onClose: () => void
+}
+
 const NAV_ITEMS = [
-  { id: 'dashboard' as PageId, icon: <LayoutDashboard size={20} /> },
-  { id: 'subjects'  as PageId, icon: <BookOpen size={20} /> },
-  { id: 'profile'   as PageId, icon: <User size={20} /> },
+  { id: 'dashboard' as PageId, path: '/dashboard', icon: <LayoutDashboard size={20} /> },
+  { id: 'subjects' as PageId, path: '/subjects', icon: <BookOpen size={20} /> },
+  { id: 'profile' as PageId, path: '/profile', icon: <User size={20} /> },
+  { id: 'admin' as PageId, path: '/admin', icon: <LayoutDashboard size={20} />, adminOnly: true },
 ]
 
-export function Sidebar({ activePage, navigate, mobileOpen, onClose }: SidebarProps) {
+const resolveActivePage = (pathname: string): PageId => {
+  if (pathname.startsWith('/subjects/')) return pathname.includes('/topics/') ? 'topic' : 'subject'
+  if (pathname.startsWith('/subjects')) return 'subjects'
+  if (pathname.startsWith('/profile')) return 'profile'
+  if (pathname.startsWith('/admin')) return 'admin'
+  return 'dashboard'
+}
+
+export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
   const { user, logout } = useAuth()
   const { t } = useLang()
+  const navigate = useNavigate()
+  const location = useLocation()
 
-  const handleNav = (page: PageId) => { navigate(page); onClose() }
+  const activePage = resolveActivePage(location.pathname)
+
+  const handleNav = (path: string) => {
+    navigate(path)
+    onClose()
+  }
 
   return (
     <>
       {mobileOpen && <div className="overlay" onClick={onClose} />}
 
       <aside className={cn(styles.sidebar, mobileOpen && styles.mobileOpen)}>
-        {/* Logo */}
         <div className={styles.logo}>
           <div className={styles.logoIcon}>KM</div>
           <span className={styles.logoText}>KelajakMerosi</span>
         </div>
 
-        {/* Nav */}
         <nav className={styles.nav}>
-          {NAV_ITEMS.map(item => (
+          {NAV_ITEMS.filter(item => !item.adminOnly || user?.role === 'admin').map(item => (
             <Button
               key={item.id}
               variant="nav"
               active={activePage === item.id}
-              onClick={() => handleNav(item.id)}
+              onClick={() => handleNav(item.path)}
               fullWidth
             >
               <span className={styles.navIcon}>{item.icon}</span>
@@ -54,7 +66,6 @@ export function Sidebar({ activePage, navigate, mobileOpen, onClose }: SidebarPr
           ))}
         </nav>
 
-        {/* User footer */}
         <div className={styles.footer}>
           {user ? (
             <>
@@ -62,11 +73,16 @@ export function Sidebar({ activePage, navigate, mobileOpen, onClose }: SidebarPr
                 <Avatar name={user.name} size={34} />
                 <div className={styles.userInfo}>
                   <span className={styles.userName}>{user.name}</span>
-                  <span className={styles.userRole}>Pro</span>
+                  <span className={styles.userRole}>{user.role === 'admin' ? 'Admin' : 'Learner'}</span>
                 </div>
               </div>
-              <Button variant="ghost" size="sm" fullWidth onClick={logout}
-                style={{ marginTop: 10, justifyContent:'center', gap: 8 }}>
+              <Button
+                variant="ghost"
+                size="sm"
+                fullWidth
+                onClick={logout}
+                style={{ marginTop: 10, justifyContent: 'center', gap: 8 }}
+              >
                 <LogOut size={16} /> {t('logout')}
               </Button>
             </>

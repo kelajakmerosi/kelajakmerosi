@@ -1,11 +1,13 @@
 const Subject = require('../models/Subject.model');
+const ERROR_CODES = require('../constants/errorCodes');
+const { sendError, sendSuccess } = require('../utils/http');
 
 // ─── GET /api/subjects ────────────────────────────────────────────────────────
 
 exports.getAllSubjects = async (req, res, next) => {
   try {
     const subjects = await Subject.findAll();
-    res.json(subjects);
+    return sendSuccess(res, subjects);
   } catch (err) { next(err); }
 };
 
@@ -14,8 +16,15 @@ exports.getAllSubjects = async (req, res, next) => {
 exports.getSubjectById = async (req, res, next) => {
   try {
     const subject = await Subject.findById(req.params.id);
-    if (!subject) return res.status(404).json({ message: 'Subject not found' });
-    res.json(subject);
+    if (!subject) {
+      return sendError(res, {
+        status: 404,
+        code: ERROR_CODES.ROUTE_NOT_FOUND,
+        message: 'Subject not found',
+        requestId: req.id,
+      });
+    }
+    return sendSuccess(res, subject);
   } catch (err) { next(err); }
 };
 
@@ -24,7 +33,7 @@ exports.getSubjectById = async (req, res, next) => {
 exports.createSubject = async (req, res, next) => {
   try {
     const subject = await Subject.create(req.body);
-    res.status(201).json(subject);
+    return sendSuccess(res, subject, undefined, 201);
   } catch (err) { next(err); }
 };
 
@@ -33,8 +42,15 @@ exports.createSubject = async (req, res, next) => {
 exports.updateSubject = async (req, res, next) => {
   try {
     const subject = await Subject.update(req.params.id, req.body);
-    if (!subject) return res.status(404).json({ message: 'Subject not found' });
-    res.json(subject);
+    if (!subject) {
+      return sendError(res, {
+        status: 404,
+        code: ERROR_CODES.ROUTE_NOT_FOUND,
+        message: 'Subject not found',
+        requestId: req.id,
+      });
+    }
+    return sendSuccess(res, subject);
   } catch (err) { next(err); }
 };
 
@@ -43,7 +59,14 @@ exports.updateSubject = async (req, res, next) => {
 exports.deleteSubject = async (req, res, next) => {
   try {
     const deleted = await Subject.remove(req.params.id);
-    if (!deleted) return res.status(404).json({ message: 'Subject not found' });
-    res.status(204).end();
+    if (!deleted) {
+      return sendError(res, {
+        status: 404,
+        code: ERROR_CODES.ROUTE_NOT_FOUND,
+        message: 'Subject not found',
+        requestId: req.id,
+      });
+    }
+    return sendSuccess(res, { deleted: true }, undefined, 200);
   } catch (err) { next(err); }
 };

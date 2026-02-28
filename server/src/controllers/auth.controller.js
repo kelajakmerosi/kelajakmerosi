@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const { OAuth2Client } = require('google-auth-library');
 const User   = require('../models/User.model');
 const ERROR_CODES = require('../constants/errorCodes');
-const { sendError } = require('../utils/http');
+const { sendError, sendSuccess } = require('../utils/http');
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -39,7 +39,7 @@ exports.register = async (req, res, next) => {
     const user  = await User.create({ name: name || email.split('@')[0], email, password });
     const token = signToken(user.id);
 
-    res.status(201).json({ token, user: User.toPublic(user) });
+    return sendSuccess(res, { token, user: User.toPublic(user) }, undefined, 201);
   } catch (err) { next(err); }
 };
 
@@ -67,7 +67,7 @@ exports.login = async (req, res, next) => {
       });
 
     const token = signToken(user.id);
-    res.json({ token, user: User.toPublic(user) });
+    return sendSuccess(res, { token, user: User.toPublic(user) });
   } catch (err) { next(err); }
 };
 
@@ -96,13 +96,12 @@ exports.googleAuth = async (req, res, next) => {
     // Upsert user — create on first login, update avatar on subsequent
     const user  = await User.upsertGoogle({ googleId, email, name, avatar: picture });
     const token = signToken(user.id);
-
-    res.json({ token, user: User.toPublic(user) });
+    return sendSuccess(res, { token, user: User.toPublic(user) });
   } catch (err) { next(err); }
 };
 
 // ─── GET /api/auth/me ─────────────────────────────────────────────────────────
 
 exports.getMe = async (req, res) => {
-  res.json({ user: User.toPublic(req.user) });
+  return sendSuccess(res, { user: User.toPublic(req.user) });
 };

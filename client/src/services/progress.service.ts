@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import type { LessonHistoryEntry, TopicProgressData, TopicProgressMap } from '../types'
 import api from './api'
 import { tokenStore } from './auth.service'
@@ -20,9 +21,30 @@ interface PatchResponse extends ProgressSnapshot {
 
 const resolveToken = (token?: string) => token ?? tokenStore.get() ?? undefined
 
+const ProgressMetricsSchema = z.object({
+  streakDays: z.number(),
+  timeOnTaskSec: z.number(),
+  lastActivityAt: z.number().nullable(),
+})
+
+const ProgressSnapshotSchema = z.object({
+  topicProgress: z.record(z.any()),
+  lessonHistory: z.array(z.object({
+    subjectId: z.string(),
+    topicId: z.string(),
+    quizScore: z.number().optional(),
+    timestamp: z.number(),
+  })),
+  metrics: ProgressMetricsSchema,
+})
+
+const PatchResponseSchema = ProgressSnapshotSchema.extend({
+  updated: z.record(z.any()),
+})
+
 export const progressService = {
   getProgress: async (token?: string): Promise<ProgressSnapshot> => {
-    return api.get<ProgressSnapshot>('/users/progress', resolveToken(token))
+    return api.get<ProgressSnapshot>('/users/progress', resolveToken(token), ProgressSnapshotSchema)
   },
 
   patchTopicProgress: async (
@@ -34,7 +56,12 @@ export const progressService = {
     const safeSubject = encodeURIComponent(subjectId)
     const safeTopic = encodeURIComponent(topicId)
 
-    return api.patch<PatchResponse>(`/users/progress/${safeSubject}/${safeTopic}`, data, resolveToken(token))
+    return api.patch<PatchResponse>(
+      `/users/progress/${safeSubject}/${safeTopic}`,
+      data,
+      resolveToken(token),
+      PatchResponseSchema,
+    )
   },
 }
 

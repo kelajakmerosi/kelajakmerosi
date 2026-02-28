@@ -45,6 +45,7 @@ export interface User {
   id:    string
   name:  string
   email: string
+  role?: 'student' | 'admin'
   token: string            // JWT-ready
 }
 
@@ -165,7 +166,7 @@ export interface AppContextValue {
 
 // ─── Page / routing types ─────────────────────────────────
 
-export type PageId = 'dashboard' | 'subjects' | 'subject' | 'topic' | 'profile'
+export type PageId = 'dashboard' | 'subjects' | 'subject' | 'topic' | 'profile' | 'admin'
 
 export interface CurrentTopic {
   subjectId: string

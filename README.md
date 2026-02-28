@@ -1,6 +1,6 @@
 # Kelajak Merosi
 
-Full-stack educational platform — **React + Vite** (client) and **Node.js / Express / MongoDB** (server).
+Full-stack educational platform — **React + Vite** (client) and **Node.js / Express / PostgreSQL** (server).
 
 ## Project Structure
 
@@ -22,7 +22,7 @@ kelajakmerosi/
         ├── config/        # DB connection
         ├── controllers/   # Route handlers
         ├── middleware/     # Auth + error middleware
-        ├── models/        # Mongoose models
+        ├── models/        # PostgreSQL data access modules
         └── routes/        # Express routers
 ```
 
@@ -30,7 +30,7 @@ kelajakmerosi/
 
 ### Prerequisites
 - Node.js ≥ 18
-- MongoDB Atlas URI (or local instance)
+- PostgreSQL connection URL
 
 ### Install all dependencies
 ```bash
@@ -40,7 +40,7 @@ npm run install:all
 ### Configure environment
 ```bash
 cp server/.env.example server/.env
-# Edit server/.env — set MONGO_URI, JWT_SECRET, etc.
+# Edit server/.env — set DATABASE_URL, JWT_SECRET, etc.
 ```
 
 ### Run in development (client + server concurrently)
@@ -49,10 +49,30 @@ npm install           # install concurrently at root
 npm run dev
 ```
 
+Quick start alias:
+```bash
+npm start
+```
+
 Or run independently:
 ```bash
 npm run dev:client    # Vite on http://localhost:5173
 npm run dev:server    # Express on http://localhost:8080
+```
+
+Client-only commands:
+```bash
+cd client
+npm start             # same as npm run dev
+npm run test
+npm run typecheck
+```
+
+Server-only commands:
+```bash
+cd server
+npm run dev
+npm run test
 ```
 
 ### Build for production
@@ -71,3 +91,23 @@ npm run build:client
 | GET | `/api/users/profile` | Get user profile |
 | GET | `/api/users/progress` | Get user progress |
 | PATCH | `/api/users/progress/:subjectId/:topicId` | Upsert lesson progress payload |
+| GET | `/api/admin/info` | Admin system info (admin only) |
+| GET | `/api/admin/users` | Admin user list (admin only) |
+
+## Admin Access
+
+- Admin route is `/admin`.
+- Non-admin authenticated users are redirected to `/dashboard`.
+- Promote a user in PostgreSQL:
+```sql
+UPDATE users SET role = 'admin' WHERE email = 'user@example.com';
+```
+
+## Troubleshooting
+
+- `Progress sync failed: API server is unreachable`:
+  Start the backend: `cd server && npm run dev`.
+- `CORS blocked for origin ...`:
+  Add your frontend origin to `CLIENT_URL` in `server/.env` (comma-separated values allowed).
+- `EADDRINUSE: address already in use :::8080`:
+  Another process uses port 8080. Stop it or run server with a different `PORT`.

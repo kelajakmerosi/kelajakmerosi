@@ -20,7 +20,7 @@ exports.notFound = (req, res) => {
 exports.errorHandler = (err, req, res, next) => {
   const statusCode = err.status ?? (res.statusCode !== 200 ? res.statusCode : 500);
 
-  // Mongoose validation error → 400
+  // Validation error → 400
   if (err.name === 'ValidationError') {
     return sendError(res, {
       status: 400,
@@ -31,7 +31,7 @@ exports.errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Mongoose duplicate key → 409
+  // Duplicate key → 409
   if (err.code === 11000) {
     const field = Object.keys(err.keyValue)[0];
     return sendError(res, {

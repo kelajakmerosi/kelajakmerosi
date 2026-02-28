@@ -1,12 +1,12 @@
 const User = require('../models/User.model');
 const Progress = require('../models/Progress.model');
 const ERROR_CODES = require('../constants/errorCodes');
-const { sendError } = require('../utils/http');
+const { sendError, sendSuccess } = require('../utils/http');
 
 // ─── GET /api/users/profile ───────────────────────────────────────────────────
 
 exports.getProfile = async (req, res) => {
-  res.json(User.toPublic(req.user));
+  return sendSuccess(res, User.toPublic(req.user));
 };
 
 // ─── PUT /api/users/profile ───────────────────────────────────────────────────
@@ -15,7 +15,7 @@ exports.updateProfile = async (req, res, next) => {
   try {
     const { name, avatar } = req.body;
     const user = await User.update(req.user.id, { name, avatar });
-    res.json(User.toPublic(user));
+    return sendSuccess(res, User.toPublic(user));
   } catch (err) { next(err); }
 };
 
@@ -24,7 +24,7 @@ exports.updateProfile = async (req, res, next) => {
 exports.getProgress = async (req, res, next) => {
   try {
     const payload = await Progress.buildProgressPayload(req.user.id);
-    res.json(payload);
+    return sendSuccess(res, payload);
   } catch (err) {
     next(err);
   }
@@ -98,7 +98,7 @@ exports.patchTopicProgress = async (req, res, next) => {
     const updated = await Progress.upsert(req.user.id, subjectId, topicId, patch);
     const snapshot = await Progress.buildProgressPayload(req.user.id);
 
-    res.json({
+    return sendSuccess(res, {
       updated: Progress.toPublicProgress(updated),
       ...snapshot,
     });

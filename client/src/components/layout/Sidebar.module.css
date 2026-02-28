@@ -134,6 +134,8 @@
 
 @media (max-width: 768px) {
   .sidebar {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     transform: translateX(-100%);
     box-shadow: 24px 0 60px rgba(2, 6, 23, 0.24);
   }

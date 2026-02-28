@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react'
-import styles from '../../styles/components.module.css'
+import styles from './GlassCard.module.css'
 import { cn } from '../../utils'
 
 interface GlassCardProps extends HTMLAttributes<HTMLDivElement> {

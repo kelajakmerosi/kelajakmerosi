@@ -18,6 +18,7 @@ export function Topbar({ activePage, onMenuToggle }: TopbarProps) {
     subject:   t('subjects'),
     profile:   t('profile'),
     topic:     t('topics'),
+    admin:     'Admin',
   }
 
   return (

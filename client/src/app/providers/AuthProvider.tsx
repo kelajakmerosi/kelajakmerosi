@@ -1,6 +1,7 @@
-import { createContext, useCallback, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useEffect, useState, type ReactNode } from 'react'
 import type { AuthContextValue, User } from '../../types'
 import { authService } from '../../services/auth.service'
+import { setApiAuthFailureHandler } from '../../services/api'
 
 export const AuthContext = createContext<AuthContextValue | null>(null)
 
@@ -38,6 +39,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const continueAsGuest = useCallback(() => {
     setIsGuest(true)
     setUser(null)
+  }, [])
+
+  useEffect(() => {
+    setApiAuthFailureHandler(() => {
+      authService.logout()
+      setUser(null)
+      setIsGuest(false)
+    })
+
+    return () => {
+      setApiAuthFailureHandler(null)
+    }
   }, [])
 
   return (

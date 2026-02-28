@@ -1,18 +1,35 @@
 const bcrypt     = require('bcryptjs');
 const { pool }   = require('../config/db');
 
+const PUBLIC_USER_FIELDS = Object.freeze([
+  'id',
+  'name',
+  'email',
+  'avatar',
+  'role',
+  'created_at',
+]);
+
 /**
- * Strip sensitive fields before sending to client.
+ * Strip sensitive fields before sending to client using an explicit allow-list.
  * @param {object} row - raw database row
  */
-const toPublic = (row) => ({
-  id:        row.id,
-  name:      row.name,
-  email:     row.email,
-  avatar:    row.avatar,
-  role:      row.role,
-  createdAt: row.created_at,
-});
+const toPublic = (row) => {
+  if (!row || typeof row !== 'object') return null;
+  const safe = {};
+  for (const field of PUBLIC_USER_FIELDS) {
+    if (Object.prototype.hasOwnProperty.call(row, field)) safe[field] = row[field];
+  }
+
+  return {
+    id: safe.id,
+    name: safe.name,
+    email: safe.email,
+    avatar: safe.avatar,
+    role: safe.role,
+    createdAt: safe.created_at,
+  };
+};
 
 /**
  * Find a user by email.
@@ -38,6 +55,19 @@ const findById = async (id) => {
     [id]
   );
   return rows[0] ?? null;
+};
+
+/**
+ * Return all users in a public-safe shape for admin list views.
+ */
+const listPublicSummaries = async () => {
+  const { rows } = await pool.query(
+    `SELECT id, name, email, avatar, role, provider, created_at
+     FROM users
+     ORDER BY created_at DESC
+     LIMIT 200`
+  );
+  return rows.map((row) => toPublic(row)).filter(Boolean);
 };
 
 /**
@@ -85,4 +115,4 @@ const upsertGoogle = async ({ googleId, email, name, avatar }) => {
   return rows[0];
 };
 
-module.exports = { findByEmail, findById, create, update, upsertGoogle, toPublic };
+module.exports = { findByEmail, findById, listPublicSummaries, create, update, upsertGoogle, toPublic };

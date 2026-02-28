@@ -1,9 +1,10 @@
 {
   "name": "kelajakmerosi",
   "version": "1.0.0",
-  "description": "Kelajak Merosi — full-stack edu platform (React + Node.js/Express + MongoDB)",
+  "description": "Kelajak Merosi — full-stack edu platform (React + Node.js/Express + PostgreSQL)",
   "private": true,
   "scripts": {
+    "start": "npm run dev",
     "dev:client": "cd client && npm run dev",
     "dev:server": "cd server && npm run dev",
     "dev": "concurrently -n CLIENT,SERVER -c cyan,green \"npm run dev:client\" \"npm run dev:server\"",
@@ -12,6 +13,9 @@
     "start:server": "npm start --prefix server",
     "typecheck": "cd client && npm run typecheck",
     "install:all": "cd client && npm install && cd ../server && npm install"
+  },
+  "dependencies": {
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
