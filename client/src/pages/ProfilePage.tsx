@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react'
 import { useLang } from '../hooks'
 import { useAuth } from '../hooks/useAuth'
 import { useSubjectStats } from '../hooks/useSubjectStats'
-import { Avatar, ProgressBar, StatCard } from '../components/ui/index'
+import { Avatar, ProgressBar } from '../components/ui/index'
 import { GlassCard } from '../components/ui/GlassCard'
 import { SUBJECT_NAMES } from '../constants'
 import { getSubjectVisual } from '../utils/subjectVisuals'
@@ -10,10 +10,13 @@ import {
   BarChart3,
   BookOpen,
   CheckCircle2,
-  Gauge,
+  Trophy,
   Mail,
   Shield,
   User,
+  Settings,
+  ArrowRight,
+  Target
 } from 'lucide-react'
 import styles from './ProfilePage.module.css'
 
@@ -30,189 +33,165 @@ export function ProfilePage() {
   const overallCompletion = totalTopics ? Math.round((totalCompletedTopics / totalTopics) * 100) : 0
 
   const roleLabel = user?.role && user.role !== 'student' ? t(user.role) : null
-  const overallStatusLabel = overallCompletion >= 100
-    ? t('completed')
-    : overallCompletion > 0
-      ? t('inProgress')
-      : t('startLearning')
-  const heroMeterStyle = {
-    ['--profile-progress-angle' as string]: `${Math.max(0, Math.min(360, overallCompletion * 3.6))}deg`,
-  } as CSSProperties
 
   return (
-    <div className="page-content fade-in">
-      <header className={styles.pageHeader}>
-        <div className={styles.titleRow}>
-          <span className={styles.titleIcon}>
-            <User size={20} aria-hidden="true" />
-          </span>
-          <div>
-            <p className={styles.eyebrow}>{t('subjects')} {t('progress')}</p>
-            <h1 className={styles.title}>{t('profile')}</h1>
-          </div>
+    <div className={`page-content fade-in ${styles.pageRoot}`}>
+      <header className={styles.header}>
+        <div className={styles.headerTitles}>
+          <p className={styles.eyebrow}>{t('profile')} &bull; {t('overview')}</p>
+          <h1 className={styles.title}>{t('profile')}</h1>
         </div>
+      </header>
 
-        <GlassCard className={styles.heroCard} padding={0}>
-          <div className={styles.heroGlow} aria-hidden="true" />
-          <div className={styles.heroBody}>
-            <div className={styles.identityBlock}>
-              <Avatar name={user?.name ?? 'Guest'} size={88} />
-
-              <div className={styles.identityCopy}>
-                <div className={styles.badgeRow}>
-                  {isGuest ? (
-                    <span className={styles.guestBadge}>
-                      <User size={12} aria-hidden="true" />
-                      {t('guestMode')}
-                    </span>
-                  ) : null}
-
-                  {roleLabel ? (
-                    <span className={styles.roleBadge}>
-                      <Shield size={12} aria-hidden="true" />
-                      {roleLabel}
-                    </span>
-                  ) : null}
-                </div>
-
-                <h2 className={styles.userName}>{user?.name ?? 'Guest'}</h2>
-
-                {user?.email ? (
-                  <p className={styles.userMeta}>
-                    <Mail size={14} aria-hidden="true" />
-                    <span>{user.email}</span>
-                  </p>
+      <div className={styles.topGrid}>
+        {/* User Identity Panel */}
+        <GlassCard className={styles.identityCard} padding={0}>
+          <div className={styles.identityCardInner}>
+            <div className={styles.identityHeader}>
+              <div className={styles.avatarWrap}>
+                <div className={styles.avatarGlow} aria-hidden="true" />
+                <Avatar name={user?.name ?? 'Guest'} size={96} />
+              </div>
+              <div className={styles.identityBadges}>
+                {isGuest ? (
+                  <span className={styles.badgeGuest}>
+                    <User size={12} /> {t('guestMode')}
+                  </span>
                 ) : null}
-
-                <div className={styles.summaryRow}>
-                  <div className={styles.summaryPill}>
-                    <span className={styles.summaryLabel}>{t('completed')}</span>
-                    <strong className={styles.summaryValue}>
-                      {totalCompletedTopics}/{totalTopics}
-                    </strong>
-                  </div>
-
-                  <div className={styles.summaryPill}>
-                    <span className={styles.summaryLabel}>{t('correct')}</span>
-                    <strong className={styles.summaryValue}>{overallAccuracy}%</strong>
-                  </div>
-
-                  <div className={styles.summaryPill}>
-                    <span className={styles.summaryLabel}>{t('subjects')}</span>
-                    <strong className={styles.summaryValue}>{subjectStats.length}</strong>
-                  </div>
-                </div>
+                {roleLabel ? (
+                  <span className={styles.badgeRole}>
+                    <Shield size={12} /> {roleLabel}
+                  </span>
+                ) : null}
               </div>
             </div>
 
-            <div className={styles.heroMeter} style={heroMeterStyle}>
-              <div className={styles.heroMeterRing}>
-                <div className={styles.heroMeterInner}>
-                  <span className={styles.heroMeterValue}>{overallCompletion}%</span>
-                  <span className={styles.heroMeterLabel}>{overallStatusLabel}</span>
-                </div>
-              </div>
+            <div className={styles.identityBody}>
+              <h2 className={styles.userName}>{user?.name ?? 'Guest'}</h2>
+              {user?.email ? (
+                <p className={styles.userEmail}>
+                  <Mail size={16} /> {user.email}
+                </p>
+              ) : null}
+            </div>
+
+            <div className={styles.identityFooter}>
+              <button className={styles.editBtn}>
+                <Settings size={16} /> {t('settings')}
+              </button>
             </div>
           </div>
         </GlassCard>
-      </header>
 
-      <section className={styles.statsGrid} aria-label={t('profile')}>
-        <StatCard icon={<BookOpen aria-hidden="true" />} value={subjectStats.length} label={t('subjects')} />
-        <StatCard icon={<BarChart3 aria-hidden="true" />} value={totalTests} label={t('totalTests')} />
-        <StatCard icon={<CheckCircle2 aria-hidden="true" />} value={totalCorrect} label={t('correct')} />
-        <StatCard icon={<Gauge aria-hidden="true" />} value={`${overallCompletion}%`} label={t('completion')} />
-      </section>
-
-      <section className={styles.subjectSection}>
-        <div className={styles.sectionHead}>
-          <div>
-            <p className={styles.eyebrow}>{t('profile')}</p>
-            <h3 className={styles.sectionTitle}>{t('subjects')} {t('progress')}</h3>
+        {/* Global Stats Dashboard */}
+        <div className={styles.statsGrid}>
+          <div className={styles.statCard}>
+            <div className={styles.statHeader}>
+              <span className={styles.statLabel}>{t('subjects')}</span>
+              <div className={styles.statIcon}><BookOpen size={18} /></div>
+            </div>
+            <div className={styles.statBody}>
+              <span className={styles.statValue}>{subjectStats.length}</span>
+              <span className={styles.statSub}>Active courses</span>
+            </div>
           </div>
-          <div className={styles.sectionSummary}>
-            <span>{subjectStats.length} {t('subjects')}</span>
-            <span>{overallCompletion}% {t('completion')}</span>
+
+          <div className={styles.statCard}>
+            <div className={styles.statHeader}>
+              <span className={styles.statLabel}>{t('totalTests')}</span>
+              <div className={styles.statIcon}><BarChart3 size={18} /></div>
+            </div>
+            <div className={styles.statBody}>
+              <span className={styles.statValue}>{totalTests}</span>
+              <span className={styles.statSub}>Questions answered</span>
+            </div>
+          </div>
+
+          <div className={styles.statCard}>
+            <div className={styles.statHeader}>
+              <span className={styles.statLabel}>{t('correct')}</span>
+              <div className={styles.statIcon}><CheckCircle2 size={18} /></div>
+            </div>
+            <div className={styles.statBody}>
+              <span className={styles.statValue}>{overallAccuracy}%</span>
+              <span className={styles.statSub}>Overall accuracy</span>
+            </div>
+          </div>
+
+          <div className={styles.statCard}>
+            <div className={styles.statHeader}>
+              <span className={styles.statLabel}>{t('completion')}</span>
+              <div className={styles.statIcon}><Trophy size={18} /></div>
+            </div>
+            <div className={styles.statBody}>
+              <span className={styles.statValue}>{overallCompletion}%</span>
+              <span className={styles.statSub}>{totalCompletedTopics} / {totalTopics} topics</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section className={styles.courseSection}>
+        <div className={styles.sectionHeader}>
+          <div>
+            <h3 className={styles.sectionTitle}>{t('subjects')}</h3>
+            <p className={styles.sectionDesc}>Track your progress across different learning modules.</p>
           </div>
         </div>
 
-        <div className={styles.subjectGrid}>
-          {subjectStats.map(({ subject, tests, correct, incorrect, pct, completed, total, completionPct }) => {
+        <div className={styles.courseGrid}>
+          {subjectStats.map(({ subject, tests, correct, pct, completed, total, completionPct }) => {
             const subjectName = SUBJECT_NAMES[lang][subject.id]
             const visual = getSubjectVisual(subject.id)
-            const subjectStatusLabel = completionPct >= 100
-              ? t('completed')
-              : completionPct > 0
-                ? t('inProgress')
-                : t('startLearning')
+            const isDone = completionPct >= 100
+            
             const cardStyle = {
-              ['--subject-color' as string]: subject.color,
-              ['--subject-gradient' as string]: subject.gradient,
+              '--course-color': subject.color,
+              '--course-bg': `color-mix(in srgb, ${subject.color} 8%, transparent)`,
+              '--course-ring': `color-mix(in srgb, ${subject.color} 20%, transparent)`
             } as CSSProperties
 
             return (
-              <GlassCard
-                key={subject.id}
-                className={styles.subjectCard}
-                padding={0}
-                style={cardStyle}
-              >
-                <div className={styles.subjectCardInner}>
-                  <div className={styles.subjectTop}>
-                    <div className={styles.subjectIdentity}>
-                      <span className={styles.subjectMediaWrap}>
-                        <img
-                          className={styles.subjectMedia}
-                          src={visual.imageUrl}
-                          alt={visual.imageAlt}
-                          loading="lazy"
-                        />
+              <GlassCard key={subject.id} className={styles.courseCard} style={cardStyle} padding={0}>
+                <div className={styles.courseInner}>
+                  <div className={styles.courseTop}>
+                    <div className={styles.courseVisualWrap}>
+                      <img src={visual.imageUrl} alt={visual.imageAlt} className={styles.courseImage} loading="lazy" />
+                    </div>
+                    <div className={styles.courseMeta}>
+                      <span className={styles.courseBadge}>
+                        {isDone ? t('completed') : t('inProgress')}
                       </span>
-
-                      <div className={styles.subjectCopy}>
-                        <h4 className={styles.subjectName}>{subjectName}</h4>
-                        <p className={styles.subjectMeta}>
-                          {completed}/{total} {t('completed')}
-                        </p>
-                        <p className={styles.subjectState}>{subjectStatusLabel}</p>
-                      </div>
+                      <h4 className={styles.courseName}>{subjectName}</h4>
+                      <p className={styles.courseMetrics}>
+                        <Target size={14} /> {completed}/{total} Topics
+                      </p>
                     </div>
-
-                    <div className={styles.progressBadge}>
-                      <span className={styles.progressBadgeValue}>{completionPct}%</span>
-                      <span className={styles.progressBadgeLabel}>{subjectStatusLabel}</span>
-                    </div>
+                    <button className={styles.courseAction}>
+                      <ArrowRight size={20} />
+                    </button>
                   </div>
 
-                  <div className={styles.progressBlock}>
-                    <div className={styles.progressBlockHead}>
-                      <span>{t('completion')}</span>
-                      <strong>{completed}/{total}</strong>
+                  <div className={styles.courseProgress}>
+                    <div className={styles.progressText}>
+                      <span className={styles.progressLabel}>Completion</span>
+                      <strong className={styles.progressValue}>{completionPct}%</strong>
                     </div>
-                    <ProgressBar value={completionPct} color={subject.gradient} height={10} />
+                    <ProgressBar value={completionPct} color={subject.gradient || subject.color} height={8} />
                   </div>
 
-                  <div className={styles.metricGrid}>
-                    <div className={styles.metricCard}>
-                      <span className={styles.metricLabel}>{t('totalTests')}</span>
-                      <strong className={styles.metricValue}>{tests}</strong>
+                  <div className={styles.courseFoot}>
+                    <div className={styles.footStat}>
+                      <span>Tests Taken</span>
+                      <strong>{tests}</strong>
                     </div>
-
-                    <div className={styles.metricCard}>
-                      <span className={styles.metricLabel}>{t('correct')}</span>
-                      <strong className={styles.metricValue}>{correct}</strong>
+                    <div className={styles.footStat}>
+                      <span>Correct</span>
+                      <strong>{correct}</strong>
                     </div>
-
-                    <div className={styles.metricCard}>
-                      <span className={styles.metricLabel}>{t('incorrect')}</span>
-                      <strong className={styles.metricValue}>{incorrect}</strong>
-                    </div>
-
-                    <div className={styles.metricCard}>
-                      <span className={styles.metricLabel}>{t('progress')}</span>
-                      <strong className={styles.metricValue} style={{ color: subject.color }}>
-                        {pct}%
-                      </strong>
+                    <div className={styles.footStat}>
+                      <span>Accuracy</span>
+                      <strong style={{ color: 'var(--course-color)' }}>{pct}%</strong>
                     </div>
                   </div>
                 </div>
