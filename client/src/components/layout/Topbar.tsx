@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Avatar } from '../ui'
 import { Modal } from '../ui/Modal'
@@ -17,13 +17,20 @@ interface TopbarProps {
   onMenuToggle: () => void
 }
 
+const LOCALE_LABELS: Record<LocaleKey, string> = {
+  uz: "O'zbek",
+  ru: 'Русский',
+  en: 'English',
+}
+
 export function Topbar({ activePage, onMenuToggle }: TopbarProps) {
   const { user, logout } = useAuth()
   const { lang, t, changeLang } = useLang()
   const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
-  const [languageOpen, setLanguageOpen] = useState(false)
+  const [langOpen, setLangOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const langRef = useRef<HTMLDivElement>(null)
 
   const roleLabel = useMemo(() => {
     if (!user?.role) return t('guest')
@@ -31,11 +38,23 @@ export function Topbar({ activePage, onMenuToggle }: TopbarProps) {
     return t(user.role)
   }, [t, user?.role])
 
-  const localeLabels: Record<LocaleKey, string> = {
-    uz: "O'zbek",
-    ru: 'Русский',
-    en: 'English',
-  }
+  const closeLang = useCallback(() => setLangOpen(false), [])
+
+  useEffect(() => {
+    if (!langOpen) return undefined
+    const onClickOutside = (event: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(event.target as Node)) closeLang()
+    }
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeLang()
+    }
+    document.addEventListener('mousedown', onClickOutside)
+    document.addEventListener('keydown', onEscape)
+    return () => {
+      document.removeEventListener('mousedown', onClickOutside)
+      document.removeEventListener('keydown', onEscape)
+    }
+  }, [langOpen, closeLang])
 
   const title = useMemo(() => {
     if (activePage === 'dashboard') return t('myLearning')
@@ -55,11 +74,35 @@ export function Topbar({ activePage, onMenuToggle }: TopbarProps) {
         </div>
 
         <div className={styles.right}>
-          <IconButton
-            icon={<Languages size={16} />}
-            label={`${t('language')}: ${lang.toUpperCase()}`}
-            onClick={() => setLanguageOpen(true)}
-          />
+          {/* Language Dropdown */}
+          <div className={styles.langWrap} ref={langRef}>
+            <IconButton
+              icon={<Languages size={16} />}
+              label={`${t('language')}: ${lang.toUpperCase()}`}
+              onClick={() => setLangOpen((prev) => !prev)}
+            />
+            {langOpen && (
+              <div className={styles.langDropdown}>
+                {SUPPORTED_LOCALES.map((locale) => {
+                  const active = locale === lang
+                  return (
+                    <button
+                      key={locale}
+                      type="button"
+                      className={`${styles.langOption} ${active ? styles.langOptionActive : ''}`}
+                      onClick={() => {
+                        changeLang(locale)
+                        setLangOpen(false)
+                      }}
+                    >
+                      <span className={styles.langOptionLabel}>{LOCALE_LABELS[locale]}</span>
+                      {active && <Check size={14} aria-hidden="true" />}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+          </div>
           <IconButton
             icon={theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
             label={t('theme')}
@@ -84,44 +127,6 @@ export function Topbar({ activePage, onMenuToggle }: TopbarProps) {
           </Button>
         </div>
       </header>
-
-      <Modal
-        open={languageOpen}
-        onClose={() => setLanguageOpen(false)}
-        title={t('language')}
-        description={`${t('language')}: ${localeLabels[lang]}`}
-        className={styles.drawerPanel}
-      >
-        <div className="grid gap-3">
-          {SUPPORTED_LOCALES.map((locale) => {
-            const active = locale === lang
-            return (
-              <button
-                key={locale}
-                type="button"
-                onClick={() => {
-                  changeLang(locale)
-                  setLanguageOpen(false)
-                }}
-                className={[
-                  'flex items-center justify-between rounded-2xl border px-4 py-4 text-left transition',
-                  active
-                    ? 'border-[color:var(--accent)] bg-[color:var(--accent-light)] text-[color:var(--accent)]'
-                    : 'border-[color:var(--surface-border)] bg-[color:var(--bg-2)] text-[color:var(--text)] hover:border-[color:var(--accent)]/40 hover:bg-[color:var(--accent-light)]/40',
-                ].join(' ')}
-              >
-                <div className="grid gap-1">
-                  <span className="text-sm font-extrabold tracking-tight">{localeLabels[locale]}</span>
-                  <span className="text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--text-3)]">
-                    {locale.toUpperCase()}
-                  </span>
-                </div>
-                {active ? <Check size={18} aria-hidden="true" /> : null}
-              </button>
-            )
-          })}
-        </div>
-      </Modal>
 
       <Modal
         open={settingsOpen}
@@ -183,11 +188,11 @@ export function Topbar({ activePage, onMenuToggle }: TopbarProps) {
               <div className="mb-3 flex items-center justify-between gap-3">
                 <div>
                   <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[color:var(--text-3)]">{t('language')}</p>
-                  <h3 className="text-lg font-extrabold tracking-tight text-[color:var(--text)]">{localeLabels[lang]}</h3>
+                  <h3 className="text-lg font-extrabold tracking-tight text-[color:var(--text)]">{LOCALE_LABELS[lang]}</h3>
                 </div>
                 <Button variant="ghost" onClick={() => {
                   setSettingsOpen(false)
-                  setLanguageOpen(true)
+                  setLangOpen(true)
                 }}>
                   {t('language')}
                 </Button>
@@ -205,7 +210,7 @@ export function Topbar({ activePage, onMenuToggle }: TopbarProps) {
                         : 'border-[color:var(--surface-border)] bg-[color:var(--glass)] text-[color:var(--text-2)] hover:border-[color:var(--accent)]/35 hover:text-[color:var(--text)]',
                     ].join(' ')}
                   >
-                    {localeLabels[locale]}
+                    {LOCALE_LABELS[locale]}
                   </button>
                 ))}
               </div>
