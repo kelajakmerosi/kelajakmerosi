@@ -819,5 +819,11 @@
   "adminExamKeyUpdateFailed": "Answer key update failed.",
   "adminExamSubmitForReview": "Submit for review",
   "adminExamSubmitReviewSuccess": "Exam moved to pending review.",
-  "adminExamSubmitReviewFailed": "Submit review failed."
+  "adminExamSubmitReviewFailed": "Submit review failed.",
+  "premium": "Premium",
+  "earlyAdopter": "Early Adopter",
+  "tests": "Tests",
+  "accuracy": "Accuracy",
+  "id": "ID",
+  "items": "Items"
 }

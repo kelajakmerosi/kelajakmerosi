@@ -1,0 +1,427 @@
+/* Container & Layout */
+.pageRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--surface-border);
+  padding-bottom: 1.5rem;
+}
+.headerTitles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-3);
+}
+.currBreadcrumb {
+  color: var(--primary-color, #4f46e5);
+  font-weight: 500;
+}
+.breadcrumbDivider {
+  color: var(--text-3);
+}
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+.headerActions {
+  display: flex;
+}
+.settingsBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md, 0.5rem);
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  color: var(--text-2);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.settingsBtn:hover {
+  background: var(--bg-2);
+  border-color: var(--text-3);
+}
+
+/* Layout Grid */
+.layoutContainer {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .layoutContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Sidebar / Identity Card */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: sticky;
+  top: calc(var(--topbar-h) + 30px);
+  height: fit-content;
+}
+.profileCard {
+  background: var(--surface);
+  border-radius: var(--radius-xl, 1rem);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--surface-border);
+}
+.profileHero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 1.5rem 1.5rem;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--surface-border);
+  text-align: center;
+  gap: 1rem;
+}
+
+/* Avatar setup */
+.avatarContainer {
+  position: relative;
+  width: 110px;
+  height: 110px;
+}
+.avatarPulse {
+  position: absolute;
+  top: -6px; left: -6px; right: -6px; bottom: -6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(79, 70, 229, 0));
+  animation: pulse 3s infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 0.3; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+.guestIndicator {
+  position: absolute;
+  bottom: 0; right: 0;
+  background: var(--surface);
+  border-radius: 50%;
+  padding: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  color: var(--text-2);
+}
+.profileNames {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+.userName {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+.roleBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  background: var(--indigo-50, #e0e7ff);
+  color: var(--indigo-700, #4338ca);
+}
+
+.profileDetails {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+.detailItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.detailIcon {
+  color: var(--text-3);
+}
+.detailText {
+  display: flex;
+  flex-direction: column;
+}
+.detailLabel {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.detailValue {
+  font-size: 0.875rem;
+  color: var(--text);
+  font-weight: 500;
+}
+.profileTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0 1.5rem 1.5rem;
+}
+.tag {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.75rem;
+  background: var(--bg-2);
+  border-radius: 1rem;
+  color: var(--text-2);
+}
+
+/* Main Content: Stats Grid */
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+@media (max-width: 600px) {
+  .statsGrid { grid-template-columns: 1fr; }
+}
+.statCard {
+  background: var(--surface);
+  border-radius: var(--radius-xl, 1rem);
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+  border: 1px solid var(--surface-border);
+}
+.statIconBox {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: var(--radius-lg, 0.75rem);
+  background: var(--accent-soft, #e0e7ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color, #4f46e5);
+}
+.statInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.statLabel {
+  font-size: 0.875rem;
+  color: var(--text-2);
+  font-weight: 500;
+}
+.statValueRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.statValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Courses Row Map */
+.courseContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.sectionHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+.resultsCount {
+  font-size: 0.875rem;
+  color: var(--text-3);
+}
+.coursesList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.courseRowLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.courseRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 2.5rem 3rem;
+  gap: 3rem;
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--surface-border);
+  transition: all 0.3s ease-in-out;
+}
+.courseRowLink:hover .courseRow {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+  border-color: var(--accent);
+}
+@media (max-width: 768px) {
+  .courseRow {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2rem 2.5rem;
+    gap: 1.5rem;
+  }
+}
+
+.courseBrand {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  min-width: 240px;
+}
+.brandIcon {
+  width: 90px;
+  height: 90px;
+  border-radius: var(--radius-md);
+  background: var(--bg-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+.brandIcon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.brandLabels {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.courseTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+.courseStatusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: var(--text-3);
+}
+.pulseDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--subject-color, currentColor);
+}
+
+.courseProgressColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 150px;
+  width: 100%;
+}
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+  color: var(--text-2);
+}
+.progressSub {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.875rem;
+  color: var(--text-3);
+}
+
+.courseStatsColumn {
+  display: flex;
+  gap: 1.5rem;
+  border-left: 1px solid var(--surface-border);
+  padding-left: 1.5rem;
+}
+@media (max-width: 768px) {
+  .courseStatsColumn {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid var(--surface-border);
+    padding-top: 1rem;
+    width: 100%;
+  }
+}
+
+.miniStat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.miniLabel {
+  font-size: 0.875rem;
+  color: var(--text-3);
+  text-transform: uppercase;
+}
+.miniValue {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.courseArrow {
+  color: var(--text-3);
+  margin-left: 0.5rem;
+}
+.courseRowLink:hover .courseArrow {
+  color: var(--primary-color, #4f46e5);
+  transform: translateX(4px);
+  transition: transform 0.2s;
+}

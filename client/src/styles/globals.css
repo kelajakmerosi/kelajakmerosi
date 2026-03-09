@@ -220,7 +220,7 @@ a {
   min-height: 100vh;
   transition: margin var(--transition);
   background: var(--bg-2);
-  overflow: hidden;
+  overflow: clip;
 }
 
 .page-content {

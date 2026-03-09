@@ -819,5 +819,11 @@
   "adminExamKeyUpdateFailed": "Не удалось обновить ключ ответа.",
   "adminExamSubmitForReview": "Отправить на проверку",
   "adminExamSubmitReviewSuccess": "Экзамен отправлен в очередь на проверку.",
-  "adminExamSubmitReviewFailed": "Не удалось отправить на проверку."
+  "adminExamSubmitReviewFailed": "Не удалось отправить на проверку.",
+  "premium": "Премиум",
+  "earlyAdopter": "Ранний участник",
+  "tests": "Тесты",
+  "accuracy": "Точность",
+  "id": "ID",
+  "items": "Элементов"
 }

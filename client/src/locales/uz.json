@@ -819,5 +819,11 @@
   "adminExamKeyUpdateFailed": "Javob kalitini yangilab bo'lmadi.",
   "adminExamSubmitForReview": "Ko'rib chiqishga yuborish",
   "adminExamSubmitReviewSuccess": "Imtihon ko'rib chiqish navbatiga yuborildi.",
-  "adminExamSubmitReviewFailed": "Ko'rib chiqishga yuborib bo'lmadi."
+  "adminExamSubmitReviewFailed": "Ko'rib chiqishga yuborib bo'lmadi.",
+  "premium": "Premium",
+  "earlyAdopter": "Ilk A'zo",
+  "tests": "Testlar",
+  "accuracy": "Aniqlik",
+  "id": "ID",
+  "items": "Soni"
 }
