@@ -1,5 +1,5 @@
-const { Pool } = require('pg');
-const { logger } = require('./logger');
+import { Pool } from 'pg';
+import { logger } from './logger';
 
 const DEFAULT_DB_CONNECT_TIMEOUT_MS = 10000;
 const parsedDbConnectTimeoutMs = Number.parseInt(process.env.DB_CONNECT_TIMEOUT_MS || '', 10);
@@ -7,7 +7,7 @@ const dbConnectTimeoutMs = Number.isFinite(parsedDbConnectTimeoutMs) && parsedDb
   ? parsedDbConnectTimeoutMs
   : DEFAULT_DB_CONNECT_TIMEOUT_MS;
 
-const parseDbEndpoint = (connectionString) => {
+const parseDbEndpoint = (connectionString: string | undefined) => {
   if (!connectionString) return { host: null, port: null };
   try {
     const parsed = new URL(connectionString);
@@ -15,7 +15,7 @@ const parseDbEndpoint = (connectionString) => {
       host: parsed.hostname || null,
       port: parsed.port ? Number(parsed.port) : 5432,
     };
-  } catch (_err) {
+  } catch {
     return { host: null, port: null };
   }
 };
@@ -48,7 +48,7 @@ const connectDB = async () => {
         dbHost: dbEndpoint.host || 'unknown',
         dbPort: dbEndpoint.port || 'unknown',
         timeoutMs: dbConnectTimeoutMs,
-        errorCode: err?.code || err?.cause?.code || 'unknown',
+        errorCode: (err as any)?.code || (err as any)?.cause?.code || 'unknown',
       },
       '[db] Connection error'
     );
@@ -556,4 +556,4 @@ const runMigrations = async () => {
   logger.info('[db] Migrations complete');
 };
 
-module.exports = { pool, connectDB };
+export { pool, connectDB };

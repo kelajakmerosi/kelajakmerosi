@@ -1,4 +1,4 @@
-import { BookOpen, Layers3, PenSquare, PlusCircle, Sparkles, Eye, EyeOff, Trash2 } from 'lucide-react'
+import { BookOpen, Layers3, PenSquare, PlusCircle, Eye, EyeOff, Trash2 } from 'lucide-react'
 import { Button } from '../../../components/ui/Button'
 import { useLang } from '../../../hooks'
 import type { SubjectRecord } from '../../../services/admin.service'

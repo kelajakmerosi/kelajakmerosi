@@ -66,10 +66,10 @@ export const PasswordSchema = z
   .string()
   .min(8)
   .max(128)
-  .refine((value) => PASSWORD_HAS_LETTER_REGEX.test(value), {
+  .refine((value: string) => PASSWORD_HAS_LETTER_REGEX.test(value), {
     message: 'Password must contain at least one letter',
   })
-  .refine((value) => PASSWORD_HAS_NUMBER_REGEX.test(value), {
+  .refine((value: string) => PASSWORD_HAS_NUMBER_REGEX.test(value), {
     message: 'Password must contain at least one number',
   })
 
@@ -198,7 +198,7 @@ export const AdminRoleUpdateSchema = z.object({
 export const AdminGrantSchema = AdminIdentitySchema
 export const AdminRevokeSchema = AdminIdentitySchema
 
-export const OptionalContentUrlSchema = z.preprocess((value) => {
+export const OptionalContentUrlSchema = z.preprocess((value: any) => {
   if (value == null) return undefined
   if (typeof value !== 'string') return value
   const trimmed = value.trim()
@@ -212,7 +212,7 @@ export const SubjectQuestionSchema = z.object({
   options: z.array(z.string().trim().min(1)).min(2),
   answer: z.number().int().nonnegative(),
   concept: z.string().trim().min(1).optional(),
-}).superRefine((value, ctx) => {
+}).superRefine((value: any, ctx: any) => {
   if (value.answer >= value.options.length) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
@@ -238,7 +238,7 @@ export const SubjectTopicUpdateSchema = z.object({
   videoUrl: OptionalContentUrlSchema,
   questions: z.array(SubjectQuestionSchema).optional(),
 }).strict().refine(
-  (value) => Object.keys(value).length > 0,
+  (value: any) => Object.keys(value).length > 0,
   { message: 'At least one field must be provided' },
 )
 
@@ -260,9 +260,9 @@ export const SubjectCreateBaseSchema = z.object({
   topics: z.array(SubjectTopicSchema).optional(),
 }).strict()
 
-export const SubjectCreateSchema = SubjectCreateBaseSchema.superRefine((value, ctx) => {
+export const SubjectCreateSchema = SubjectCreateBaseSchema.superRefine((value: any, ctx: any) => {
   if (!value.topics) return
-  const topicIds = value.topics.map((topic) => topic.id)
+  const topicIds = value.topics.map((topic: any) => topic.id)
   if (new Set(topicIds).size !== topicIds.length) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
@@ -272,7 +272,7 @@ export const SubjectCreateSchema = SubjectCreateBaseSchema.superRefine((value, c
   }
 })
 
-export const SubjectUpdateSchema = SubjectCreateBaseSchema.partial().superRefine((value, ctx) => {
+export const SubjectUpdateSchema = SubjectCreateBaseSchema.partial().superRefine((value: any, ctx: any) => {
   if (Object.keys(value).length === 0) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
@@ -282,7 +282,7 @@ export const SubjectUpdateSchema = SubjectCreateBaseSchema.partial().superRefine
   }
 
   if (!value.topics) return
-  const topicIds = value.topics.map((topic) => topic.id)
+  const topicIds = value.topics.map((topic: any) => topic.id)
   if (new Set(topicIds).size !== topicIds.length) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
@@ -427,7 +427,7 @@ export const ExamQuestionCreateSchema = z.object({
   sourceRef: z.string().trim().optional(),
   formatType: QuestionFormatTypeSchema.default('MCQ4'),
   writtenAnswer: z.string().trim().optional(),
-}).superRefine((value, ctx) => {
+}).superRefine((value: any, ctx: any) => {
   const fmt = value.formatType ?? 'MCQ4'
   if (fmt === 'MCQ4' || fmt === 'MCQ8') {
     if (!value.options || value.options.length < 2) {
@@ -481,7 +481,7 @@ export const ExamUpdateSchema = z.object({
   blocks: z.array(ExamBlockCreateSchema).optional(),
   questions: z.array(ExamQuestionCreateSchema).optional(),
 }).strict().refine(
-  (value) => Object.keys(value).length > 0,
+  (value: any) => Object.keys(value).length > 0,
   { message: 'At least one exam field must be provided' },
 )
 

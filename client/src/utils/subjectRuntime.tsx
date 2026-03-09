@@ -56,7 +56,7 @@ const getIconNode = (iconName: string | undefined) => {
 }
 
 export const toRuntimeSubject = (record: SubjectRecord): Subject => {
-  const color = pickColor(record.id, record.color)
+  const color = pickColor(record.id, record.color ?? undefined)
   const gradient = `linear-gradient(135deg, ${color}, color-mix(in srgb, ${color} 58%, #ffffff 42%))`
 
   const topics: Topic[] = (record.topics || []).map((topic) => {
@@ -66,7 +66,7 @@ export const toRuntimeSubject = (record: SubjectRecord): Subject => {
       return ['Option A', 'Option B']
     }
 
-    const questions = (topic.questions || []).map((question, idx) => {
+    const questions = (topic.questions || []).map((question: any, idx: number) => {
       const options = optionsSafe(question.options)
       return {
         id: Number(question.id ?? idx + 1),
@@ -99,8 +99,8 @@ export const toRuntimeSubject = (record: SubjectRecord): Subject => {
     id: record.id,
     title: record.title,
     description: record.description || '',
-    iconName: record.icon,
-    icon: getIconNode(record.icon),
+    iconName: record.icon ?? undefined,
+    icon: getIconNode(record.icon ?? undefined),
     color,
     gradient,
     topics,

@@ -17,7 +17,7 @@ import Exam from '../models/Exam.model'
 const {
   FIXED_EXAM_DURATION_SEC,
   FIXED_EXAM_PASS_PERCENT,
-  DEFAULT_REQUIRED_EXAM_QUESTION_COUNT,
+
 } = Exam
 
 const parseAllowedQuestionCounts = () => {

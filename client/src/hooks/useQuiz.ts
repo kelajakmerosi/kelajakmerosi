@@ -3,9 +3,9 @@ import type { Question, TopicProgressData } from '../types'
 
 export interface QuizState {
   currentIndex: number
-  answers:      Record<number, number>
-  submitted:    boolean
-  score:        number | undefined
+  answers: Record<number, number>
+  submitted: boolean
+  score: number | undefined
   masteryScore: number | undefined
 }
 
@@ -18,10 +18,10 @@ const difficultyWeight = (difficulty: Question['difficulty']): number => {
 export function useQuiz(questions: Question[], savedData: TopicProgressData) {
   const [state, setState] = useState<QuizState>({
     currentIndex: Math.max(0, Math.min(savedData.resumeQuestionIndex ?? 0, questions.length - 1)),
-    answers:      savedData.quizAnswers   ?? {},
-    submitted:    savedData.quizSubmitted ?? false,
-    score:        savedData.quizScore,
-    masteryScore: savedData.masteryScore,
+    answers: savedData.quizAnswers ?? {},
+    submitted: savedData.quizSubmitted ?? false,
+    score: savedData.quizScore ?? undefined,
+    masteryScore: savedData.masteryScore ?? undefined,
   })
 
   const selectAnswer = useCallback((qIndex: number, optIndex: number) => {
@@ -91,7 +91,7 @@ export function useQuiz(questions: Question[], savedData: TopicProgressData) {
 
   const canNext = state.answers[state.currentIndex] !== undefined
   const canPrev = state.currentIndex > 0
-  const isLast  = state.currentIndex === questions.length - 1
+  const isLast = state.currentIndex === questions.length - 1
 
   return {
     state,

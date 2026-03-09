@@ -193,8 +193,8 @@ export function SubjectPage({ subjectId, onBack, onTopicSelect }: SubjectPagePro
                       name={topic.title || TOPIC_NAMES[lang]?.[topic.id] || topic.id}
                       status={status}
                       statusLabel={statusLabels[status]}
-                      quizScore={data.quizScore}
-                      masteryScore={data.masteryScore}
+                      quizScore={data.quizScore ?? undefined}
+                      masteryScore={data.masteryScore ?? undefined}
                       totalQuestions={topic.questions.length}
                       subjectColor={subject.color}
                       subjectGrad={subject.gradient}

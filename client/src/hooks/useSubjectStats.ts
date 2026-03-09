@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { SUBJECTS } from '../constants'
-import { useApp }   from './index'
+import { useApp } from './index'
 
 export function useSubjectStats(subjectId?: string) {
   const { getTopicData } = useApp()
@@ -14,7 +14,7 @@ export function useSubjectStats(subjectId?: string) {
 
       subject.topics.forEach(topic => {
         const d = getTopicData(subject.id, topic.id)
-        if (d.quizScore !== undefined) {
+        if (d.quizScore !== undefined && d.quizScore !== null) {
           tests += topic.questions.length
           correct += d.quizScore
         }
@@ -27,7 +27,7 @@ export function useSubjectStats(subjectId?: string) {
         subject,
         tests,
         correct,
-        incorrect:  tests - correct,
+        incorrect: tests - correct,
         pct,
         completed,
         total,

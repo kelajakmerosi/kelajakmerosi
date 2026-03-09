@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react'
-import { Alert } from '../ui/index'
 import { Button } from '../ui/Button'
 import { useLang } from '../../hooks'
 import { Smile, ThumbsUp, BookOpen, ListChecks, CheckCircle2, XCircle, Target, RotateCcw, BookMarked, Clock } from 'lucide-react'

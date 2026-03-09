@@ -78,7 +78,7 @@ export const authService = {
     const body = LegacyLoginOtpConfirmSchema.parse(payload)
     const res = await api.post('/auth/login/otp/confirm', body, undefined, AuthPayloadSchema)
     const user = persistUser(res)
-    return { user, requiresPasswordSetup: Boolean(res.requiresPasswordSetup) }
+    return { user, requiresPasswordSetup: Boolean((res as any).requiresPasswordSetup) }
   },
 
   passwordResetRequestCode: async (phone: string): Promise<void> => {
@@ -87,7 +87,7 @@ export const authService = {
 
   passwordResetConfirmCode: async (payload: { phone: string; code: string }): Promise<{ resetToken: string; resetTokenTtlSec: number }> => {
     const body = LegacyLoginOtpConfirmSchema.parse(payload)
-    const res = await api.post('/auth/password/reset/confirm-code', body, undefined, PasswordResetConfirmCodeResponseSchema)
+    const res = await api.post('/auth/password/reset/confirm-code', body, undefined, PasswordResetConfirmCodeResponseSchema) as any
     return { resetToken: res.resetToken, resetTokenTtlSec: res.resetTokenTtlSec }
   },
 
