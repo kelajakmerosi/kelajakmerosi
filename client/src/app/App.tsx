@@ -1,5 +1,7 @@
 import { Navigate, BrowserRouter, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { NotFoundPage } from '../pages/NotFoundPage'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from '../lib/queryClient'
 import { ThemeProvider } from './providers/ThemeProvider'
 import { LanguageProvider } from './providers/LanguageProvider'
 import { AuthProvider } from './providers/AuthProvider'
@@ -177,15 +179,17 @@ function RoutedApp() {
 export default function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider>
-        <LanguageProvider>
-          <ToastProvider>
-            <AuthProvider>
-              <RoutedApp />
-            </AuthProvider>
-          </ToastProvider>
-        </LanguageProvider>
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <LanguageProvider>
+            <ToastProvider>
+              <AuthProvider>
+                <RoutedApp />
+              </AuthProvider>
+            </ToastProvider>
+          </LanguageProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
     </ErrorBoundary>
   )
 }
