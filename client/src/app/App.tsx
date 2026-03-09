@@ -1,4 +1,5 @@
 import { Navigate, BrowserRouter, Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { NotFoundPage } from '../pages/NotFoundPage'
 import { ThemeProvider } from './providers/ThemeProvider'
 import { LanguageProvider } from './providers/LanguageProvider'
 import { AuthProvider } from './providers/AuthProvider'
@@ -20,12 +21,17 @@ import { PaymentGatewayPage } from '../pages/PaymentGatewayPage'
 import { useAuth } from '../hooks/useAuth'
 import type { CurrentTopic, PageId } from '../types'
 
-const routeForPage = (page: PageId, opts?: { subjectId?: string; topic?: CurrentTopic }): string => {
+const routeForPage = (
+  page: PageId,
+  opts?: { subjectId?: string; topic?: CurrentTopic; examId?: string; attemptId?: string },
+): string => {
   if (page === 'dashboard') return '/dashboard'
   if (page === 'subjects') return '/subjects'
   if (page === 'profile') return '/profile'
   if (page === 'admin') return '/admin'
   if (page === 'exams') return '/exams'
+  if (page === 'exam') return opts?.examId ? `/exams/${opts.examId}` : '/exams'
+  if (page === 'examAttempt') return opts?.attemptId ? `/exam-attempts/${opts.attemptId}` : '/exams'
   if (page === 'payment') return '/dashboard'
   if (page === 'subject') return opts?.subjectId ? `/subjects/${opts.subjectId}` : '/subjects'
   if (page === 'topic' && opts?.topic) {
@@ -112,6 +118,12 @@ function AdminGuardRoute() {
   return <AdminPage />
 }
 
+function LandingRoute() {
+  const { user, isGuest } = useAuth()
+  if (user || isGuest) return <Navigate to="/dashboard" replace />
+  return <LandingPage />
+}
+
 function PublicAuthRoute() {
   const { user, isGuest } = useAuth()
   if (user || isGuest) return <Navigate to="/dashboard" replace />
@@ -137,7 +149,7 @@ function RoutedApp() {
       }}
     >
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<LandingRoute />} />
         <Route path="/auth" element={<PublicAuthRoute />} />
 
         <Route element={<ProtectedAppShellRoute />}>
@@ -154,7 +166,7 @@ function RoutedApp() {
           <Route path="/payments/:paymentId" element={<PaymentGatewayPage />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   )
