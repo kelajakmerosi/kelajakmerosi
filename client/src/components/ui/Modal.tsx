@@ -1,4 +1,4 @@
-import { type MouseEvent, type ReactNode, useEffect, useId, useRef } from 'react'
+import { type MouseEvent, type ReactNode, useEffect, useId, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import styles from './Modal.module.css'
 import { cn } from '../../utils'
@@ -49,6 +49,12 @@ export function Modal({
   const titleId = labelledBy ?? `modal-title-${generatedTitleId}`
   const descriptionId = describedBy ?? (description ? `modal-description-${generatedDescriptionId}` : undefined)
 
+  // Keep a stable ref to onClose so the focus-trap effect doesn't re-run
+  // (and steal focus) just because the parent re-renders with a new callback reference.
+  const onCloseRef = useRef(onClose)
+  useEffect(() => { onCloseRef.current = onClose })
+  const stableOnClose = useCallback(() => onCloseRef.current(), [])
+
   useEffect(() => {
     if (!open || typeof document === 'undefined') return undefined
 
@@ -65,7 +71,7 @@ export function Modal({
       if (event.key === 'Escape') {
         if (!dismissible) return
         event.preventDefault()
-        onClose()
+        stableOnClose()
         return
       }
 
@@ -100,7 +106,7 @@ export function Modal({
       document.removeEventListener('keydown', onKeyDown)
       previousActive?.focus?.()
     }
-  }, [dismissible, onClose, open])
+  }, [dismissible, stableOnClose, open])
 
   useEffect(() => {
     if (!open || typeof document === 'undefined') return undefined
