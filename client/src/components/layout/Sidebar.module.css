@@ -18,31 +18,28 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 8px 8px 12px;
   border-bottom: 1px solid color-mix(in srgb, var(--sidebar-border) 88%, transparent);
   margin-bottom: 2px;
 }
 
 .logoIcon {
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius-md);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  background: linear-gradient(135deg, #6f63ff, #8f84ff);
-  box-shadow: var(--shadow-sm);
+  color: #6a5cf2;
+  font-size: 1.9rem;
+  line-height: 1;
 }
 
 .logoText {
-  font-size: 22px;
+  font-size: 1.35rem;
   line-height: 1;
   font-weight: 800;
-  color: var(--text);
+  color: #6a5cf2;
   letter-spacing: -0.03em;
-  font-family: var(--font-display);
+  font-family: 'Nunito', sans-serif;
 }
 
 .logoCopy {

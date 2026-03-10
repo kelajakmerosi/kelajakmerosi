@@ -222,6 +222,14 @@ export const SubjectQuestionSchema = z.object({
   }
 })
 
+export const SubjectSectionSchema = z.object({
+  id: z.string().min(1),
+  type: z.enum(['attestation', 'general', 'milliy']),
+  title: z.string().trim().min(1),
+  topicIds: z.array(z.string().min(1)).default([]),
+  comingSoon: z.boolean().optional(),
+}).strict()
+
 export const SubjectTopicSchema = z.object({
   id: z.string().min(1),
   title: z.string().trim().min(1),
@@ -258,6 +266,7 @@ export const SubjectCreateBaseSchema = z.object({
   color: z.string().optional(),
   order: z.number().int().optional(),
   topics: z.array(SubjectTopicSchema).optional(),
+  sections: z.array(SubjectSectionSchema).optional(),
 }).strict()
 
 export const SubjectCreateSchema = SubjectCreateBaseSchema.superRefine((value: any, ctx: any) => {
@@ -594,6 +603,7 @@ export const TeacherQuotaSchema = z.object({
 
 export type PublicUser = z.infer<typeof PublicUserSchema>
 export type AuthPayload = z.infer<typeof AuthPayloadSchema>
+export type SubjectSection = z.infer<typeof SubjectSectionSchema>
 export type SubjectTopic = z.infer<typeof SubjectTopicSchema>
 export type SubjectTopicCreate = z.infer<typeof SubjectTopicCreateSchema>
 export type SubjectTopicUpdate = z.infer<typeof SubjectTopicUpdateSchema>

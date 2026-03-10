@@ -62,6 +62,10 @@ vi.mock('../pages/ProfilePage', () => ({
   ProfilePage: () => <div>ProfilePage</div>,
 }))
 
+vi.mock('../pages/MyTestsPage', () => ({
+  MyTestsPage: () => <div>MyTestsPage</div>,
+}))
+
 vi.mock('../pages/AdminPage', () => ({
   AdminPage: () => <div>AdminPage</div>,
   default: () => <div>AdminPage</div>,
@@ -131,6 +135,11 @@ describe('App routing', () => {
   it('renders profile route', () => {
     renderAt('/profile', { user: { id: 'u1', role: 'student' }, isGuest: false })
     expect(screen.getByText('ProfilePage')).toBeTruthy()
+  })
+
+  it('renders my tests route', () => {
+    renderAt('/my-tests', { user: { id: 'u1', role: 'student' }, isGuest: false })
+    expect(screen.getByText('MyTestsPage')).toBeTruthy()
   })
 
   it('renders admin for admin users', () => {

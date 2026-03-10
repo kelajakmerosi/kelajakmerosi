@@ -150,6 +150,64 @@
   gap: 12px;
 }
 
+.sectionGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionCard {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sectionCard:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.sectionCardInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  gap: 16px;
+}
+
+.sectionTitle {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 4px;
+  color: var(--text);
+}
+
+.sectionMeta {
+  font-size: 13px;
+  color: var(--text-2);
+  font-weight: 600;
+  margin: 0;
+}
+
+.sectionAction {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.comingSoonBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-3);
+  background: color-mix(in srgb, var(--surface-border) 50%, transparent);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
 .skeletonRow {
   height: 62px;
   border-radius: var(--radius-md);

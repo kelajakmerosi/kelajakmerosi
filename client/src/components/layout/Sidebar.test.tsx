@@ -17,6 +17,7 @@ vi.mock('../../hooks', () => ({
   useLang: () => ({
     t: (key: string) => {
       if (key === 'login') return 'Login'
+      if (key === 'home') return 'Home'
       if (key === 'dashboard') return 'Dashboard'
       if (key === 'subjects') return 'Subjects'
       if (key === 'profile') return 'Profile'

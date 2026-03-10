@@ -10,11 +10,10 @@ import styles from './Sidebar.module.css'
 import {
   BookOpen,
   CircleDashed,
-  LayoutDashboard,
+  Home,
   LogOut,
-  Sparkles,
-  SquareCheckBig,
   Shield,
+  Trophy,
 } from 'lucide-react'
 
 interface SidebarProps {
@@ -32,20 +31,19 @@ type SidebarItem = {
 }
 
 const NAV_ITEMS: SidebarItem[] = [
-  { id: 'dashboard', label: 'dashboard', icon: <LayoutDashboard size={20} />, path: '/dashboard' },
-  { id: 'lesson', label: 'lessons', icon: <BookOpen size={20} />, path: '/subjects' },
-  { id: 'task', label: 'exams', icon: <SquareCheckBig size={20} />, path: '/exams' },
+  { id: 'home', label: 'home', icon: <Home size={20} />, path: '/dashboard' },
+  { id: 'subjects', label: 'subjects', icon: <BookOpen size={20} />, path: '/subjects' },
+  { id: 'myResults', label: 'myResults', icon: <Trophy size={20} />, path: '/my-results' },
   { id: 'admin', label: 'admin', icon: <Shield size={19} />, path: '/admin', adminOnly: true },
 ]
 
 const isActiveForItem = (
   itemId: string,
   activePage: PageId,
-  paymentKind: string | null,
 ) => {
-  if (itemId === 'dashboard') return activePage === 'dashboard'
-  if (itemId === 'lesson') return activePage === 'subjects' || activePage === 'subject' || activePage === 'topic'
-  if (itemId === 'task') return activePage === 'exams' || activePage === 'exam' || activePage === 'examAttempt' || (activePage === 'payment' && paymentKind !== 'material')
+  if (itemId === 'home') return activePage === 'dashboard'
+  if (itemId === 'subjects') return activePage === 'subjects' || activePage === 'subject' || activePage === 'topic' || activePage === 'attestation' || activePage === 'generalSection'
+  if (itemId === 'myResults') return activePage === 'myResults'
   if (itemId === 'admin') return activePage === 'admin'
   return false
 }
@@ -57,7 +55,6 @@ export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
   const location = useLocation()
 
   const activePage = resolveActivePage(location.pathname)
-  const paymentKind = new URLSearchParams(location.search).get('kind')
 
   const handleNav = (path?: string) => {
     if (!path) return
@@ -76,10 +73,10 @@ export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
       <aside className={cn(styles.sidebar, mobileOpen && styles.mobileOpen)}>
         <div className={styles.logo}>
           <div className={styles.logoIcon}>
-            <Sparkles size={18} />
+            <i className="fa fa-book" aria-hidden="true" />
           </div>
           <div className={styles.logoCopy}>
-            <span className={styles.logoText}>KelajakMerosi</span>
+            <span className={styles.logoText}>Kelajak Merosi</span>
           </div>
         </div>
 
@@ -87,7 +84,7 @@ export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
 
         <nav className={styles.nav} aria-label={t('menu')}>
           {visibleNavItems.map((item) => {
-            const active = isActiveForItem(item.id, activePage, paymentKind)
+            const active = isActiveForItem(item.id, activePage)
 
             return (
               <Button

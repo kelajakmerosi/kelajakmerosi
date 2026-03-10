@@ -9,17 +9,12 @@ import { queryKeys } from '../lib/queryClient'
 
 const MIN_DEMO_SUBJECTS = 6
 const DEMO_SUBJECT_TITLE = 'demo matematika'
-const REMOVED_SUBJECT_IDS = new Set(['geography'])
-const REMOVED_SUBJECT_TITLES = new Set(['geografiya', 'geography'])
 
 const fallbackSubjects = SUBJECTS
 
 const isRemovedLearnerSubject = (subject: Subject) => {
-  const normalizedId = String(subject.id || '').trim().toLowerCase()
   const normalizedTitle = String(subject.title || '').trim().toLowerCase()
   return normalizedTitle === DEMO_SUBJECT_TITLE
-    || REMOVED_SUBJECT_IDS.has(normalizedId)
-    || REMOVED_SUBJECT_TITLES.has(normalizedTitle)
 }
 
 const composeDemoSubjects = (preferred: Subject[]): Subject[] => {

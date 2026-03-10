@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import type { SubjectSection } from '@shared/contracts'
 // ─── Domain types ─────────────────────────────────────────
 
 export type LocaleKey = 'uz' | 'en' | 'ru'
@@ -43,6 +44,7 @@ export interface Subject {
   gradient: string
   topics: Topic[]
   modules: SubjectModule[]
+  sections?: SubjectSection[]
 }
 
 // ─── Auth types ───────────────────────────────────────────
@@ -197,6 +199,10 @@ export type PageId =
   | 'exam'
   | 'examAttempt'
   | 'payment'
+  | 'attestation'
+  | 'generalSection'
+  | 'myTests'
+  | 'myResults'
 
 export interface CurrentTopic {
   subjectId: string

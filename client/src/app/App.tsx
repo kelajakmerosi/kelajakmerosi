@@ -22,12 +22,16 @@ import { ExamCheckoutPage } from '../pages/ExamCheckoutPage'
 import { ExamSessionPage } from '../pages/ExamSessionPage'
 import { ExamResultPage } from '../pages/ExamResultPage'
 import { PaymentGatewayPage } from '../pages/PaymentGatewayPage'
+import { AttestationPage } from '../pages/AttestationPage'
+import { GeneralSectionPage } from '../pages/GeneralSectionPage'
+import { MyTestsPage } from '../pages/MyTestsPage'
+import { MyResultsPage } from '../pages/MyResultsPage'
 import { useAuth } from '../hooks/useAuth'
 import type { CurrentTopic, PageId } from '../types'
 
 const routeForPage = (
   page: PageId,
-  opts?: { subjectId?: string; topic?: CurrentTopic; examId?: string; attemptId?: string },
+  opts?: { subjectId?: string; topic?: CurrentTopic; examId?: string; attemptId?: string; sectionId?: string },
 ): string => {
   if (page === 'dashboard') return '/dashboard'
   if (page === 'subjects') return '/subjects'
@@ -41,6 +45,10 @@ const routeForPage = (
   if (page === 'topic' && opts?.topic) {
     return `/subjects/${opts.topic.subjectId}/topics/${opts.topic.topicId}`
   }
+  if (page === 'attestation') return opts?.subjectId ? `/attestations/${opts.subjectId}` : '/subjects'
+  if (page === 'generalSection') return opts?.sectionId && opts?.subjectId ? `/general/${opts.sectionId}/${opts.subjectId}` : '/subjects'
+  if (page === 'myTests') return '/my-tests'
+  if (page === 'myResults') return '/my-results'
   return '/dashboard'
 }
 
@@ -71,6 +79,10 @@ function SubjectRoute() {
       subjectId={subjectId}
       onBack={() => navigate('/subjects')}
       onTopicSelect={(topic) => navigate(`/subjects/${topic.subjectId}/topics/${topic.topicId}`)}
+      onSectionSelect={(sectionType, sectionId, subjId) => {
+        if (sectionType === 'attestation') navigate(`/attestations/${subjId}`)
+        else if (sectionType === 'general') navigate(`/general/${sectionId}/${subjId}`)
+      }}
     />
   )
 }
@@ -86,6 +98,35 @@ function TopicRoute() {
       topicId={topicId}
       onBack={() => navigate(`/subjects/${subjectId}`)}
       onGoToSubjects={() => navigate('/subjects')}
+    />
+  )
+}
+
+function AttestationRoute() {
+  const navigate = useNavigate()
+  const { subjectId } = useParams<{ subjectId: string }>()
+  if (!subjectId) return <Navigate to="/subjects" replace />
+
+  return (
+    <AttestationPage
+      subjectId={subjectId}
+      onBack={() => navigate(`/subjects/${subjectId}`)}
+      onTopicSelect={(subjId, topicId) => navigate(`/subjects/${subjId}/topics/${topicId}`)}
+    />
+  )
+}
+
+function GeneralSectionRoute() {
+  const navigate = useNavigate()
+  const { sectionId, subjectId } = useParams<{ sectionId: string; subjectId: string }>()
+  if (!sectionId || !subjectId) return <Navigate to="/subjects" replace />
+
+  return (
+    <GeneralSectionPage
+      sectionId={sectionId}
+      subjectId={subjectId}
+      onBack={() => navigate(`/subjects/${subjectId}`)}
+      onTopicSelect={(subjId, topicId) => navigate(`/subjects/${subjId}/topics/${topicId}`)}
     />
   )
 }
@@ -161,6 +202,10 @@ function RoutedApp() {
           <Route path="/subjects" element={<SubjectsRoute />} />
           <Route path="/subjects/:subjectId" element={<SubjectRoute />} />
           <Route path="/subjects/:subjectId/topics/:topicId" element={<TopicRoute />} />
+          <Route path="/attestations/:subjectId" element={<AttestationRoute />} />
+          <Route path="/general/:sectionId/:subjectId" element={<GeneralSectionRoute />} />
+          <Route path="/my-tests" element={<MyTestsPage />} />
+          <Route path="/my-results" element={<MyResultsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin" element={<AdminGuardRoute />} />
           <Route path="/exams" element={<ExamCatalogRoute />} />

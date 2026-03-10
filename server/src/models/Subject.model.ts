@@ -11,6 +11,14 @@ export interface SubjectTopic {
   [key: string]: any
 }
 
+export interface SubjectSection {
+  id: string
+  type: 'attestation' | 'general' | 'milliy'
+  title: string
+  topicIds: string[]
+  comingSoon?: boolean
+}
+
 export interface Subject {
   id: string | number
   title: string
@@ -19,6 +27,7 @@ export interface Subject {
   color?: string
   order?: number
   topics?: SubjectTopic[]
+  sections?: SubjectSection[]
   is_hidden?: boolean
   track?: string
   created_at?: Date | string
@@ -53,17 +62,18 @@ export interface CreateSubjectParams {
   color?: string
   order?: number
   topics?: SubjectTopic[]
+  sections?: SubjectSection[]
   is_hidden?: boolean
   track?: string
 }
 
 const create = async (data: CreateSubjectParams): Promise<Subject> => {
-  const { title, description = '', icon = '', color = '#6366f1', order = 0, topics = [], is_hidden = false, track = 'foundation' } = data
+  const { title, description = '', icon = '', color = '#6366f1', order = 0, topics = [], sections = [], is_hidden = false, track = 'foundation' } = data
   const { rows } = await pool.query(
-    `INSERT INTO subjects (title, description, icon, color, "order", topics, is_hidden, track)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `INSERT INTO subjects (title, description, icon, color, "order", topics, sections, is_hidden, track)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
      RETURNING *`,
-    [title, description, icon, color, order, JSON.stringify(topics), is_hidden, track]
+    [title, description, icon, color, order, JSON.stringify(topics), JSON.stringify(sections), is_hidden, track]
   )
   return rows[0]
 }
@@ -75,12 +85,13 @@ export interface UpdateSubjectParams {
   color?: string
   order?: number
   topics?: SubjectTopic[]
+  sections?: SubjectSection[]
   is_hidden?: boolean
   track?: string
 }
 
 const update = async (id: string | number, data: UpdateSubjectParams): Promise<Subject | null> => {
-  const { title, description, icon, color, order, topics, is_hidden, track } = data
+  const { title, description, icon, color, order, topics, sections, is_hidden, track } = data
   const { rows } = await pool.query(
     `UPDATE subjects
      SET title = COALESCE($1, title),
@@ -89,11 +100,12 @@ const update = async (id: string | number, data: UpdateSubjectParams): Promise<S
          color = COALESCE($4, color),
          "order" = COALESCE($5, "order"),
          topics = COALESCE($6, topics),
-         is_hidden = COALESCE($7, is_hidden),
-         track = COALESCE($8, track),
+         sections = COALESCE($7, sections),
+         is_hidden = COALESCE($8, is_hidden),
+         track = COALESCE($9, track),
          updated_at = NOW()
-     WHERE id = $9 RETURNING *`,
-    [title, description, icon, color, order, topics ? JSON.stringify(topics) : null, is_hidden ?? null, track ?? null, id]
+     WHERE id = $10 RETURNING *`,
+    [title, description, icon, color, order, topics ? JSON.stringify(topics) : null, sections ? JSON.stringify(sections) : null, is_hidden ?? null, track ?? null, id]
   )
   return rows[0] ?? null
 }

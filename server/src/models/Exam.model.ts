@@ -34,6 +34,8 @@ export interface ExamEntity {
   publishedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  topicId?: string | null;
+  sectionType?: string | null;
   purchased?: boolean;
   attemptsRemaining?: number;
   subjectTitle?: string | null;
@@ -101,6 +103,8 @@ const mapExam = (row: any): ExamEntity | null => {
     publishedAt: row.published_at,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    topicId: row.topic_id || null,
+    sectionType: row.section_type || null,
   }
 }
 

@@ -4,7 +4,7 @@ import { tokenStore } from './auth.service'
 
 const resolveToken = () => tokenStore.get() ?? undefined
 
-import { SubjectTopicSchema } from '@shared/contracts'
+import { SubjectTopicSchema, SubjectSectionSchema } from '@shared/contracts'
 
 const SubjectRecordSchema = z.object({
   id: z.string().min(1),
@@ -14,6 +14,7 @@ const SubjectRecordSchema = z.object({
   color: z.string().nullable().optional(),
   order: z.number().int().optional(),
   topics: z.array(SubjectTopicSchema).default([]),
+  sections: z.array(SubjectSectionSchema).default([]),
 })
 
 export type SubjectRecord = z.infer<typeof SubjectRecordSchema>

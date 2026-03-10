@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { BookOpen, Calculator, Dna, FlaskConical, Globe2, Sigma, Zap } from 'lucide-react'
+import { BookOpen, Calculator, Dna, FlaskConical, Globe2, Languages, Monitor, Sigma, Zap } from 'lucide-react'
 import type { Subject, SubjectModule, Topic } from '../types'
 import type { SubjectRecord } from '../services/subject.service'
 
@@ -14,6 +14,8 @@ const iconByName: Record<string, ReactNode> = {
   flask: <FlaskConical size={22} strokeWidth={2.35} />,
   globe: <Globe2 size={22} strokeWidth={2.35} />,
   bookopen: <BookOpen size={22} strokeWidth={2.35} />,
+  monitor: <Monitor size={22} strokeWidth={2.35} />,
+  languages: <Languages size={22} strokeWidth={2.35} />,
 }
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value))
@@ -105,5 +107,6 @@ export const toRuntimeSubject = (record: SubjectRecord): Subject => {
     gradient,
     topics,
     modules,
+    sections: record.sections || [],
   }
 }

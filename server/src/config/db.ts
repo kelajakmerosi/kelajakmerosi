@@ -552,6 +552,19 @@ const runMigrations = async () => {
     -- Phase 4: Subject track for taxonomy grouping
     ALTER TABLE subjects
       ADD COLUMN IF NOT EXISTS track TEXT DEFAULT 'foundation';
+
+    -- Phase 5: Section-typed subject hierarchy (Attestatsiya / Umumiy / Milliy)
+    ALTER TABLE subjects
+      ADD COLUMN IF NOT EXISTS sections JSONB DEFAULT '[]';
+
+    -- Phase 5: Exam ↔ topic/section linkage
+    ALTER TABLE exams
+      ADD COLUMN IF NOT EXISTS topic_id TEXT;
+    ALTER TABLE exams
+      ADD COLUMN IF NOT EXISTS section_type TEXT;
+
+    CREATE INDEX IF NOT EXISTS idx_exams_topic_section
+      ON exams(topic_id, section_type);
   `);
   logger.info('[db] Migrations complete');
 };
